@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>EntityFramework.MappingAPI</id>
+    <version>5.0.0.5</version>
+    <title>EntityFramework.MappingAPI</title>
+    <authors>Markko Legonkov</authors>
+    <owners>Markko Legonkov</owners>
+    <licenseUrl>https://efmappingapi.codeplex.com/license</licenseUrl>
+    <projectUrl>https://efmappingapi.codeplex.com/</projectUrl>
+    <iconUrl>https://download-codeplex.sec.s-msft.com/Download?ProjectName=efmappingapi&amp;DownloadId=804448&amp;Build=20865</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>EntityFramework mapping API gives you ability to know the database info behind the context.</description>
+    <summary>EntityFramework mapping API gives you ability to know the database info behind the context.</summary>
+    <releaseNotes>Strongly named assembly</releaseNotes>
+    <copyright>Copyright  2013</copyright>
+    <language>en-US</language>
+    <tags>data EntityFramework mapping api</tags>
+    <dependencies>
+      <dependency id="EntityFramework" version="[5.0.0]" />
+    </dependencies>
+  </metadata>
+</package>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EntityFramework.BulkInsert</id>
+    <version>$version$</version>
+    <title>EntityFramework.BulkInsert</title>
+    <authors>Markko Legonkov</authors>
+    <owners>Markko Legonkov</owners>
+    <description>
+      Bulk insert extension for EntityFramework 5
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      Bulk insert extension for EntityFramework 5
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://efbulkinsert.codeplex.com/</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
+    <copyright>Copyright  2013</copyright>
+    <tags>data ef5 code-first batch bulk insert</tags>
+	<dependencies>
+      <dependency id="EntityFramework" version="5.0.0" />
+    </dependencies>
+  </metadata>
+</package>

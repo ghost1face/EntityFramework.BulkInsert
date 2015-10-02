@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ErikEJ.SqlCeBulkCopy</id>
+    <version>2.1.6.4</version>
+    <title>ErikEJ.SqlCeBulkCopy</title>
+    <authors>http://erikej.blogspot.com</authors>
+    <owners>http://erikej.blogspot.com</owners>
+    <licenseUrl>http://sqlcebulkcopy.codeplex.com/license</licenseUrl>
+    <projectUrl>http://sqlcebulkcopy.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.NET Library for loading data fast (doing bulk inserts) into a SQL Server Compact database file. Attempts to mimic the SqlClient SqlBulkCopy API.</description>
+    <summary>.NET Library for loading data fast (doing bulk inserts) into a SQL Server Compact database file.</summary>
+    <releaseNotes />
+    <copyright />
+    <language>en-US</language>
+    <tags>sql bulk insert load data sqlce</tags>
+    <dependencies>
+      <dependency id="Microsoft.SqlServer.Compact" />
+    </dependencies>
+  </metadata>
+</package>

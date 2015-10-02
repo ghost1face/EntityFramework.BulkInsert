@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{20B90CC0-1DC1-4154-8434-A16B9B902FC4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EntityFramework.BulkInsert.Test</RootNamespace>
+    <AssemblyName>EntityFramework.BulkInsert.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\Net45\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET45_EF5|AnyCPU'">
+    <OutputPath>bin\NET45_EF5\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET45;EF5</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET45_EF6|AnyCPU'">
+    <OutputPath>bin\NET45_EF6\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET45;EF6</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.SqlServer">
+          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.5.0.0.6\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Data.Entity" />
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(Configuration)'=='NET45_EF5' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.SqlServer">
+          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.5.0.0.6\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="EntityFramework.SqlServerCompact">
+          <HintPath>..\packages\EntityFramework.SqlServerCompact.4.1.8482.1\lib\System.Data.SqlServerCe.Entity.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Data.Entity" />
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(Configuration)'=='NET45_EF6' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.SqlServer">
+          <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.6.0.0.7\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="EntityFramework.SqlServerCompact">
+          <HintPath>..\packages\EntityFramework.SqlServerCompact.6.1.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <ItemGroup>
+    <Reference Include="ErikEJ.SqlCe40">
+      <HintPath>..\packages\ErikEJ.SqlCeBulkCopy.2.1.6.4\lib\net40\ErikEJ.SqlCe40.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Salient.Data">
+      <HintPath>..\packages\ErikEJ.SqlCeBulkCopy.2.1.6.4\lib\net40\Salient.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeFirst\BulkInsert\BulkInsertTestBase.cs" />
+    <Compile Include="CodeFirst\BulkInsert\PerformanceTestBase.cs" />
+    <Compile Include="CodeFirst\BulkInsert\SqlCe\SqlCeBulkInsertTest.cs" />
+    <Compile Include="CodeFirst\BulkInsert\SqlServer\SqlBulkInsertWithMappedDataReader.cs" />
+    <Compile Include="CodeFirst\BulkInsert\SqlServer\SqlBulkInsertWithMappedDataReaderPerformance.cs" />
+    <Compile Include="CodeFirst\Domain\PinPoint.cs" />
+    <Compile Include="CodeFirst\Domain\Foo.cs" />
+    <Compile Include="CodeFirst\SqlCeContext.cs" />
+    <Compile Include="CodeFirst\SqlContext.cs" />
+    <Compile Include="CustomProvider\Class1.cs" />
+    <Compile Include="DatabaseFirst\Authors.cs">
+      <DependentUpon>TestDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseFirst\Books.cs">
+      <DependentUpon>TestDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseFirst\Class1.cs" />
+    <Compile Include="DatabaseFirst\Publishers.cs">
+      <DependentUpon>TestDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseFirst\TestDataModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestDataModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseFirst\TestDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseFirst\TestDataModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="CodeFirst\Domain\Contract.cs" />
+    <Compile Include="CodeFirst\Domain\Employee.cs" />
+    <Compile Include="CodeFirst\Domain\Entity.cs" />
+    <Compile Include="CodeFirst\Domain\EntityWithTypedId.cs" />
+    <Compile Include="CodeFirst\Domain\ICreatedAt.cs" />
+    <Compile Include="CodeFirst\Domain\IModifiedAt.cs" />
+    <Compile Include="CodeFirst\Domain\MeteringPoint.cs" />
+    <Compile Include="CodeFirst\Domain\Reading.cs" />
+    <Compile Include="Issue1344\AccrualContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1344\BaseXafConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1344\IntervalEntity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1344\Post.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1344\PostConfiguration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1344\XafEntity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1344\XafGcEntity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Issue1369\Issue1369Context.cs" />
+    <Compile Include="Issue1369\LoanEntity.cs" />
+    <Compile Include="Issue1369\CreditReportEntity.cs" />
+    <Compile Include="MappedDataReaderTest.cs" />
+    <Compile Include="CodeFirst\Domain\ComplexTypes\Address.cs" />
+    <Compile Include="CodeFirst\Domain\ComplexTypes\Contact.cs" />
+    <Compile Include="CodeFirst\Domain\Page.cs" />
+    <Compile Include="CodeFirst\Domain\PageTranslations.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CodeFirst\TestBase.cs" />
+    <Compile Include="CodeFirst\TestBaseContext.cs" />
+    <Compile Include="CodeFirst\Domain\TestUser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EntityDeploy Include="DatabaseFirst\TestDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>TestDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="DatabaseFirst\TestDataModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TestDataModel.edmx</DependentUpon>
+      <LastGenOutput>TestDataModel.Context.cs</LastGenOutput>
+    </None>
+    <None Include="DatabaseFirst\TestDataModel.edmx.diagram">
+      <DependentUpon>TestDataModel.edmx</DependentUpon>
+    </None>
+    <None Include="DatabaseFirst\TestDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TestDataModel.edmx</DependentUpon>
+      <LastGenOutput>TestDataModel.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EntityFramework.BulkInsert.SqlServerCe\EntityFramework.BulkInsert.SqlServerCe.csproj">
+      <Project>{8BCCBC7B-9F9F-491A-8778-88EF6D2A279C}</Project>
+      <Name>EntityFramework.BulkInsert.SqlServerCe</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntityFramework.BulkInsert\EntityFramework.BulkInsert.csproj">
+      <Project>{E48AB221-FB79-4F22-9641-3C283F44F1C7}</Project>
+      <Name>EntityFramework.BulkInsert</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Issue1344\Table Schema.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

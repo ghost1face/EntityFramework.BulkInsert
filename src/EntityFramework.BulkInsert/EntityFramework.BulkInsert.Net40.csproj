@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B4390E6F-B8F1-4C18-8EE7-D09A52EBC601}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EntityFramework.BulkInsert</RootNamespace>
+    <AssemblyName>EntityFramework.BulkInsert</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\Net40\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET40_EF4|AnyCPU'">
+    <OutputPath>bin\NET40_EF4\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40;EF4</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET40_EF5|AnyCPU'">
+    <OutputPath>bin\NET40_EF5\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40;EF5</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET40_EF6|AnyCPU'">
+    <OutputPath>bin\NET40_EF6\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40;EF6</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>efbulkinsert.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.6.0.0.6\lib\net40\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="EntityFramework">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(Configuration)'=='NET40_EF4' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.4.1.10715.0\lib\EntityFramework.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.4.1.0.6\lib\net40\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(Configuration)'=='NET40_EF5' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.5.0.0.6\lib\net40\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(Configuration)'=='NET40_EF6' ">
+      <ItemGroup>
+        <Reference Include="EntityFramework">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.SqlServer">
+          <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+        </Reference>
+        <Reference Include="EntityFramework.MappingAPI">
+          <HintPath>..\packages\EntityFramework.MappingAPI.6.0.0.7\lib\net40\EntityFramework.MappingAPI.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Exceptions\BulkInsertProviderNotFoundException.cs" />
+    <Compile Include="Exceptions\EntityTypeNotFoundException.cs" />
+    <Compile Include="Extensions\BulkInsertExtension.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Helpers\DataTableHelper.cs" />
+    <Compile Include="Helpers\MappedDataReader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProviderFactory.cs" />
+    <Compile Include="Providers\EfSqlBulkInsertProviderWithMappedDataReader.cs" />
+    <Compile Include="Providers\IEfBulkInsertProvider.cs" />
+    <Compile Include="Providers\ProviderBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="efbulkinsert.pfx" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
