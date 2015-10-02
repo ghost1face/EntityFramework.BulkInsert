@@ -6,6 +6,9 @@ using System.Data.SqlServerCe;
 using System.Linq;
 using EntityFramework.BulkInsert.Helpers;
 using EntityFramework.BulkInsert.Providers;
+#if NET45
+using System.Threading.Tasks;
+#endif
 
 namespace EntityFramework.BulkInsert.SqlServerCe
 {
@@ -20,6 +23,8 @@ namespace EntityFramework.BulkInsert.SqlServerCe
         {
             get { return DbConnection.ConnectionString; }
         }
+
+#if NET45
 
         /// <summary>
         /// Get sql grography object from well known text
@@ -36,6 +41,42 @@ namespace EntityFramework.BulkInsert.SqlServerCe
         {
             throw new NotImplementedException();
         }
+
+        public override Task RunAsync<T>(IEnumerable<T> entities)
+        {
+            using (var dbConnection = GetConnection())
+            {
+                dbConnection.Open();
+
+                if ((Options.SqlBulkCopyOptions & SqlBulkCopyOptions.UseInternalTransaction) > 0)
+                {
+                    using (var transaction = dbConnection.BeginTransaction())
+                    {
+                        try
+                        {
+                            Run(entities, (SqlCeConnection)dbConnection, (SqlCeTransaction)transaction);
+                            transaction.Commit();
+                        }
+                        catch (Exception)
+                        {
+                            if (transaction.Connection != null)
+                            {
+                                transaction.Rollback();
+                            }
+                            throw;
+                        }
+                    }
+                }
+                else
+                {
+                    Run(entities, (SqlCeConnection)dbConnection, null);
+                }
+
+                return Task.FromResult(0);
+            }
+        }
+
+#endif
 
         public override void Run<T>(IEnumerable<T> entities)
         {
@@ -109,7 +150,7 @@ namespace EntityFramework.BulkInsert.SqlServerCe
                 var colInfos = ColInfos(connection, reader)
                     .Values
                     .Where(x => !x.IsIdentity || keepIdentity)
-                    .ToArray(); 
+                    .ToArray();
 
                 using (var cmd = CreateCommand(reader.TableName, connection, transaction))
                 {
@@ -158,6 +199,15 @@ namespace EntityFramework.BulkInsert.SqlServerCe
             Run(entities, (SqlCeConnection)transaction.Connection, transaction);
         }
 
+#if NET45
+        public override Task RunAsync<T>(IEnumerable<T> entities, SqlCeTransaction transaction)
+        {
+            Run(entities, (SqlCeConnection) transaction.Connection, transaction);
+
+            return Task.FromResult(0);
+        }
+#endif
+
 
         private void SetIdentityInsert(SqlCeConnection connection, SqlCeTransaction transaction, string tableName, bool on)
         {
@@ -193,16 +243,16 @@ namespace EntityFramework.BulkInsert.SqlServerCe
             var colInfos = new Dictionary<string, ColInfo>();
             foreach (DataRow row in dtColumns.Rows)
             {
-                var tableName = (string) row.ItemArray[2];
+                var tableName = (string)row.ItemArray[2];
                 if (tableName != reader.TableName)
                 {
                     continue;
                 }
 
-                var columnName = (string) row.ItemArray[3];
-                var ordinal = (int) row.ItemArray[4] - 1;
+                var columnName = (string)row.ItemArray[3];
+                var ordinal = (int)row.ItemArray[4] - 1;
 
-                colInfos[columnName] = new ColInfo {OrdinalPosition = ordinal};
+                colInfos[columnName] = new ColInfo { OrdinalPosition = ordinal };
             }
 
             foreach (var kvp in reader.Cols)

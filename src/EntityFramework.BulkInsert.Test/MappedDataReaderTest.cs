@@ -22,6 +22,7 @@ using EntityFramework.BulkInsert.Test.Domain.ComplexTypes;
 using EntityFramework.MappingAPI;
 using EntityFramework.MappingAPI.Extensions;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace EntityFramework.BulkInsert.Test
 {
@@ -45,7 +46,22 @@ namespace EntityFramework.BulkInsert.Test
                 throw new NotImplementedException();
             }
 
+            public Task RunAsync<T>(IEnumerable<T> entities)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task RunAsync<T>(IEnumerable<T> entities, IDbTransaction transaction)
+            {
+                throw new NotImplementedException();
+            }
+
             public object GetSqlGeography(string wkt, int srid)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetSqlGeometry(string wkt, int srid)
             {
                 throw new NotImplementedException();
             }

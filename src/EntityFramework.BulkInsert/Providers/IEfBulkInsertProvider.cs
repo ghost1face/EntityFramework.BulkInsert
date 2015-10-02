@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Threading.Tasks;
 using EntityFramework.BulkInsert.Extensions;
 
 namespace EntityFramework.BulkInsert.Providers
@@ -36,6 +37,23 @@ namespace EntityFramework.BulkInsert.Providers
         IEfBulkInsertProvider SetContext(DbContext context);
 
 #if NET45
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        Task RunAsync<T>(IEnumerable<T> entities);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entities"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        Task RunAsync<T>(IEnumerable<T> entities, IDbTransaction transaction);
 
         /// <summary>
         /// Get sql grography object from well known text
