@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EntityFramework.BulkInsert.Providers
 {
-    public abstract class ProviderBase<TConnection, TTransaction> : IEfBulkInsertProvider 
+    public abstract class ProviderBase<TConnection, TTransaction> : IEfBulkInsertProvider
         where TConnection : IDbConnection
         where TTransaction : IDbTransaction
     {
@@ -114,7 +114,10 @@ namespace EntityFramework.BulkInsert.Providers
         /// <returns></returns>
         public IDbConnection GetConnection()
         {
-            return CreateConnection();
+            if (Options.Connection != null)
+                return Options.Connection;
+            else
+                return CreateConnection();
         }
 
         /// <summary>
@@ -141,26 +144,50 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="entities"></param>
         public virtual void Run<T>(IEnumerable<T> entities)
         {
-            using (var dbConnection = GetConnection())
-            {
-                dbConnection.Open();
+            IDbConnection dbConnection = null;
 
-                using (var transaction = dbConnection.BeginTransaction())
+            if (Options.Connection == null)
+            {
+                dbConnection = GetConnection();
+            }
+            else
+                dbConnection = Options.Connection;
+
+            try
+            {
+
+                if (dbConnection.State != ConnectionState.Open)
+                    dbConnection.Open();
+
+                if (Options.Connection != null && Options.Transaction != null)
                 {
-                    try
+                    Run(entities, Options.Transaction);
+                }
+                else
+                {
+                    using (var transaction = dbConnection.BeginTransaction())
                     {
-                        Run(entities, transaction);
-                        transaction.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        if (transaction.Connection != null)
+                        try
                         {
-                            transaction.Rollback();
+                            Run(entities, transaction);
+                            transaction.Commit();
                         }
-                        throw;
+                        catch (Exception)
+                        {
+                            if (transaction.Connection != null)
+                            {
+                                transaction.Rollback();
+                            }
+                            throw;
+                        }
                     }
                 }
+            }
+            finally
+            {
+                // See if we made the connection and dispose if so
+                if(Options.Connection == null)
+                    dbConnection.Dispose();
             }
         }
 
