@@ -133,7 +133,13 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <param name="batchSize"></param>
         public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, IDbTransaction transaction, SqlBulkCopyOptions sqlBulkCopyOptions = SqlBulkCopyOptions.Default, int? batchSize = null)
         {
-            var options = new BulkInsertOptions {SqlBulkCopyOptions = sqlBulkCopyOptions};
+            var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
+            if (transaction != null)
+            {
+                options.Connection = transaction.Connection;
+                options.Transaction = transaction;
+            }
+
             if (batchSize.HasValue)
             {
                 options.BatchSize = batchSize.Value;
@@ -186,6 +192,16 @@ namespace EntityFramework.BulkInsert.Extensions
         /// </summary>
         public int NotifyAfter { get; set; }
 
+        /// <summary>
+        /// If we already have a connection, use it instead of creating a new one.
+        /// </summary>
+        public IDbConnection Connection { get; set; }
+
+        /// <summary>
+        /// If we already have a transaction, use it instead of creating a new one.
+        /// </summary>
+        public IDbTransaction Transaction { get; set; }
+
 #if !NET40
         /// <summary>
         /// 
@@ -199,6 +215,8 @@ namespace EntityFramework.BulkInsert.Extensions
             SqlBulkCopyOptions = BulkInsertDefaults.SqlBulkCopyOptions;
             TimeOut = BulkInsertDefaults.TimeOut;
             NotifyAfter = BulkInsertDefaults.NotifyAfter;
+            Connection = null;
+            Transaction = null;
         }
         /*
 
