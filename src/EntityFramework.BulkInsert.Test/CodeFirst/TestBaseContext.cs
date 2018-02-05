@@ -32,8 +32,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
         public DbSet<Item> Items { get; set; }
 
         public DbSet<TestUser> Users { get; set; }
- 
-        public DbSet<Page> Pages { get; set; } 
+
+        public DbSet<Page> Pages { get; set; }
 
         public DbSet<PageTranslations> PageTranslations { get; set; }
 
@@ -72,7 +72,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
             mb.Entity<Page>().Property(x => x.Title).HasMaxLength(255);
             mb.Entity<Page>().HasOptional(x => x.Parent).WithMany().HasForeignKey(x => x.ParentId);
 
-            mb.Entity<PageTranslations>().HasKey(x => new {x.PageId, x.Language});
+            mb.Entity<PageTranslations>().HasKey(x => new { x.PageId, x.Language });
             mb.Entity<PageTranslations>().Property(x => x.Title).HasMaxLength(255);
 
             mb.Entity<EmployeeTPH>().Property(x => x.Title).HasColumnName("JobTitle");
@@ -82,7 +82,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
                 .Map<ManagerTPH>(m => m.Requires("__employeeType").HasValue(2));
 
             mb.Entity<AWorkerTPH>().HasRequired(x => x.Boss).WithMany(x => x.Henchmen).HasForeignKey(x => x.BossId);
-            
+
             mb.Entity<WorkerTPT>().HasRequired(x => x.Boss).WithMany(x => x.Henchmen);
 
 

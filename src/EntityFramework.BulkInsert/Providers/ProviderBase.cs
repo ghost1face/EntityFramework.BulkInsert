@@ -186,7 +186,7 @@ namespace EntityFramework.BulkInsert.Providers
             finally
             {
                 // See if we made the connection and dispose if so
-                if(Options.Connection == null)
+                if (Options.Connection == null)
                     dbConnection.Dispose();
             }
         }

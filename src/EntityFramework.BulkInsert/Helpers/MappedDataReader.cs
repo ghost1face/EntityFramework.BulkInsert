@@ -29,9 +29,9 @@ namespace EntityFramework.BulkInsert.Helpers
         /// <summary>
         /// Property maps by ordinal position
         /// </summary>
-        public Dictionary<int, IPropertyMap> Cols { get; private set; } 
+        public Dictionary<int, IPropertyMap> Cols { get; private set; }
 
-        public Dictionary<Type, List<object>> Refs { get; private set; } 
+        public Dictionary<Type, List<object>> Refs { get; private set; }
 
         /// <summary>
         /// Ordinal positions of columns
@@ -91,9 +91,9 @@ namespace EntityFramework.BulkInsert.Helpers
             TableName = firstTableName;
             SchemaName = baseMapping.Schema;
 
-            Indexes     = new Dictionary<string, int>();
-            Cols        = new Dictionary<int, IPropertyMap>();
-            Selectors   = new Dictionary<Type, Dictionary<int, Func<T, object>>>();
+            Indexes = new Dictionary<string, int>();
+            Cols = new Dictionary<int, IPropertyMap>();
+            Selectors = new Dictionary<Type, Dictionary<int, Func<T, object>>>();
 
             _enumerator = enumerable.GetEnumerator();
 
@@ -122,7 +122,7 @@ namespace EntityFramework.BulkInsert.Helpers
                         Indexes[col.ColumnName] = currentIndex;
                         ++i;
                     }
-                     
+
                     if (col.IsDiscriminator)
                     {
                         var x = Expression.Parameter(baseType, "x");
@@ -136,12 +136,12 @@ namespace EntityFramework.BulkInsert.Helpers
                         var x = Expression.Parameter(baseType, "x");
 
                         var propNames = col.PropertyName.Split('.');
-                        Expression propertyExpression = baseType == entityType 
+                        Expression propertyExpression = baseType == entityType
                             ? Expression.PropertyOrField(x, propNames[0])
                             : Expression.PropertyOrField(Expression.Convert(x, entityType), propNames[0]);
                         propertyExpression = propNames.Skip(1).Aggregate(propertyExpression, Expression.PropertyOrField);
 
-                        var expression = Expression.Lambda<Func<T, object>>(Expression.Convert(propertyExpression, typeof (object)), x);
+                        var expression = Expression.Lambda<Func<T, object>>(Expression.Convert(propertyExpression, typeof(object)), x);
                         var selector = expression.Compile();
                         Selectors[entityType][currentIndex] = selector;
                     }
@@ -157,7 +157,7 @@ namespace EntityFramework.BulkInsert.Helpers
             _enumerator.Dispose();
         }
 
-        private Dictionary<int, Func<T, object>> _currentEntityTypeSelectors; 
+        private Dictionary<int, Func<T, object>> _currentEntityTypeSelectors;
         public bool Read()
         {
             var read = _enumerator.MoveNext();

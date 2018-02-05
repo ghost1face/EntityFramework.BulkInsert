@@ -80,15 +80,15 @@ namespace EntityFramework.BulkInsert.Test.Domain
     public class ContractKomb2 : ContractBase
     {
         public int PackageKomb2Id { get; set; }
-        
+
         public decimal? Part1Margin { get; set; }
         public string Part1PricesJson { get; set; }
-        
+
         public int Part1SubPackageId { get; set; }
 
         public decimal? Part2Margin { get; set; }
         public string Part2PricesJson { get; set; }
-        
+
         public int Part2SubPackageId { get; set; }
     }
 }

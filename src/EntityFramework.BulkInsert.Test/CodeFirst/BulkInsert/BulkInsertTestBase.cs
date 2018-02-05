@@ -51,12 +51,12 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         {
             using (var ctx = GetContext())
             {
-                var meteringPoint = new MeteringPoint {CreatedAt = DateTime.Now};
+                var meteringPoint = new MeteringPoint { CreatedAt = DateTime.Now };
                 ctx.Set<MeteringPoint>().Add(meteringPoint);
                 ctx.SaveChanges();
 
 
-                var foos = new[] {new ContractStock {Margin = 0.1m, MeteringPointId = meteringPoint.Id}};
+                var foos = new[] { new ContractStock { Margin = 0.1m, MeteringPointId = meteringPoint.Id } };
                 var options = new BulkInsertOptions
                 {
                     EnableStreaming = true,
@@ -94,20 +94,22 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         {
             using (var ctx = GetContext())
             {
-                var foos = new[] {new Foo {Bar = "bar"}};
+                var foos = new[] { new Foo { Bar = "bar" } };
                 ctx.BulkInsert(foos);
             }
         }
 
         [Test]
-        [ExpectedException(typeof(EntityTypeNotFoundException))]
         public void TryToInsertIgnoredEntity()
         {
-            using (var ctx = GetContext())
+            Assert.Throws<EntityTypeNotFoundException>(() =>
             {
-                var foos = new Foo[] { new Foo { Bar = "bar" }, new FooExtended {ExtendedValue = "pla"} };
-                ctx.BulkInsert(foos);
-            }
+                using (var ctx = GetContext())
+                {
+                    var foos = new Foo[] { new Foo { Bar = "bar" }, new FooExtended { ExtendedValue = "pla" } };
+                    ctx.BulkInsert(foos);
+                }
+            });
         }
 
         [Test]
@@ -148,13 +150,13 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 var rand = new Random();
                 var x = rand.Next(100);
                 var y = rand.Next(100);
-                var foos = new[] { new Foo { Bar = "bar", X = x, Y = y} };
+                var foos = new[] { new Foo { Bar = "bar", X = x, Y = y } };
                 ctx.BulkInsert(foos);
 
                 var foo = ctx.Foos.OrderByDescending(f => f.Id).First();
                 Assert.AreEqual(x, foo.X);
                 Assert.AreEqual(y, foo.Y);
-                Assert.AreEqual(x*y, foo.Z);
+                Assert.AreEqual(x * y, foo.Z);
             }
         }
 
@@ -169,7 +171,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 {
                     using (var transactionScope = new TransactionScope())
                     {
-                        ctx.Pages.Add(new Page {Title = "test", Content = "Test"});
+                        ctx.Pages.Add(new Page { Title = "test", Content = "Test" });
 
                         ctx.BulkInsert(CreatePages(10));
 
@@ -210,7 +212,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 {
                     Id = Guid.NewGuid(),
                     MarketplaceLoanId = "x",
-                    MarketplaceMemberId = "x", 
+                    MarketplaceMemberId = "x",
                     LoanAmount = 12,
                     FundedAmount = 12,
                     InterestRate = 100,
@@ -234,8 +236,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                     {
                         Id = Guid.NewGuid()
                     }}
-                };  
-                var loans = new[] {loan};
+                };
+                var loans = new[] { loan };
 
                 ctx.BulkInsert(loans, SqlBulkCopyOptions.KeepIdentity);
             }
@@ -251,7 +253,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 using (var transactionScope = new TransactionScope())
                 {
-                    ctx.Pages.Add(new Page {Title = "test", Content = "Test", CreatedAt = DateTime.Now });
+                    ctx.Pages.Add(new Page { Title = "test", Content = "Test", CreatedAt = DateTime.Now });
 
                     ctx.BulkInsert(CreatePages(10));
 
@@ -261,7 +263,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 var countAfter = ctx.Pages.Count();
                 Assert.AreEqual(count + 11, countAfter);
-               
+
             }
         }
 
@@ -334,8 +336,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 var c1 = new ContractFixed
                 {
-                    AvpContractNr = "c_FIX", 
-                    PackageFixedId = 1, 
+                    AvpContractNr = "c_FIX",
+                    PackageFixedId = 1,
                     PricesJson = "{}",
                     MeteringPointId = mp.Id,
                     ClientId = 5,
@@ -374,7 +376,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 Assert.AreEqual(k1.ContractSignedAt, k1db.ContractSignedAt);
             }
         }
-        
+
         [Test]
         public void TPH_SubType_First()
         {
@@ -384,8 +386,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 var c1 = new ContractFixed
                 {
-                    AvpContractNr = "c_FIX", 
-                    PackageFixedId = 1, 
+                    AvpContractNr = "c_FIX",
+                    PackageFixedId = 1,
                     PricesJson = "{}",
                     MeteringPointId = 2,
                     ClientId = 5,
@@ -433,19 +435,19 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 Assert.AreEqual(k1.ContractSignedAt, k1db.ContractSignedAt);
             }
         }
-        
+
         [Test]
         public void TPT_SubType_First()
         {
             using (var ctx = GetContext())
             {
                 var employees = new List<ManagerTPT>();
-                
+
                 var manager = new ManagerTPT { JobTitle = "Manager", Name = "Bar", Rank = "low" };
                 employees.Add(manager);
 
                 ctx.BulkInsert(employees);
-                
+
                 var dbManager = ctx.ManagerTpts.OrderByDescending(x => x.Id).First();
 
                 Assert.AreEqual(manager.JobTitle, dbManager.JobTitle);
@@ -461,9 +463,9 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
             {
                 var employees = new List<WorkerTPT>();
 
-                var worker = new WorkerTPT { JobTitle = "Worker", Name = "Foo", Boss = new ManagerTPT { Id = 1, Name = "The boss", Rank = "High", JobTitle = "The manager" }};
+                var worker = new WorkerTPT { JobTitle = "Worker", Name = "Foo", Boss = new ManagerTPT { Id = 1, Name = "The boss", Rank = "High", JobTitle = "The manager" } };
                 employees.Add(worker);
-                
+
                 ctx.BulkInsert(employees);
 
                 var dbWorker = ctx.WorkerTpts.OrderByDescending(x => x.Id).First();

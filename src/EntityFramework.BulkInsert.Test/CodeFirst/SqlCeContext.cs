@@ -1,4 +1,5 @@
-﻿#if EF6
+﻿#if SQLCE
+#if EF6
 using System.Data.Entity;
 using System.Data.Entity.SqlServerCompact;
 #endif
@@ -35,3 +36,4 @@ namespace EntityFramework.Bulkinsert.Test.CodeFirst
     }
 #endif
 }
+#endif

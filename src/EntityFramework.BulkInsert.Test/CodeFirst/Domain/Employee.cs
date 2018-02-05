@@ -22,7 +22,7 @@ namespace EntityFramework.BulkInsert.Test.Domain
     public class ManagerTPT : EmployeeTPT
     {
         public string Rank { get; set; }
-        public virtual ICollection<WorkerTPT> Henchmen { get; set; } 
+        public virtual ICollection<WorkerTPT> Henchmen { get; set; }
     }
 
 
@@ -46,6 +46,6 @@ namespace EntityFramework.BulkInsert.Test.Domain
     {
         public string Rank { get; set; }
         public int? RefId { get; set; }
-        public virtual ICollection<AWorkerTPH> Henchmen { get; set; } 
+        public virtual ICollection<AWorkerTPH> Henchmen { get; set; }
     }
 }

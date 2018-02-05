@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿#if SQLCE
+using System.Data.Entity;
 #if EF6
 using System.Data.Entity.Core.Common;
 using System.Data.Entity.SqlServerCompact;
@@ -69,3 +70,4 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert.SqlCe
         }
     }
 }
+#endif

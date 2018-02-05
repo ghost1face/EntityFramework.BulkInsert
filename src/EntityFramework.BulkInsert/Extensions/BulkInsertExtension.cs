@@ -8,7 +8,7 @@ namespace EntityFramework.BulkInsert.Extensions
 {
     public static class BulkInsertExtension
     {
- 
+
 #if NET45
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace EntityFramework.BulkInsert.Extensions
         public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, SqlBulkCopyOptions sqlBulkCopyOptions, int? batchSize = null)
         {
 
-            var options = new BulkInsertOptions {SqlBulkCopyOptions = sqlBulkCopyOptions};
+            var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
             if (batchSize.HasValue)
             {
                 options.BatchSize = batchSize.Value;
