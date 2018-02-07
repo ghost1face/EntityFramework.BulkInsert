@@ -138,6 +138,7 @@
     <Compile Include="CodeFirst\BulkInsert\SqlCe\SqlCeBulkInsertTest.cs" />
     <Compile Include="CodeFirst\BulkInsert\SqlServer\SqlBulkInsertWithMappedDataReader.cs" />
     <Compile Include="CodeFirst\BulkInsert\SqlServer\SqlBulkInsertWithMappedDataReaderPerformance.cs" />
+    <Compile Include="EnumTest\Company.cs" />
     <Compile Include="CodeFirst\Domain\PinPoint.cs" />
     <Compile Include="CodeFirst\Domain\Foo.cs" />
     <Compile Include="CodeFirst\SqlCeContext.cs" />
@@ -176,6 +177,8 @@
     <Compile Include="CodeFirst\Domain\IModifiedAt.cs" />
     <Compile Include="CodeFirst\Domain\MeteringPoint.cs" />
     <Compile Include="CodeFirst\Domain\Reading.cs" />
+    <Compile Include="EnumTest\CompanySize.cs" />
+    <Compile Include="EnumTest\EnumTestContext.cs" />
     <Compile Include="Issue1344\AccrualContext.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -28,6 +28,7 @@ using Aske.Persistence.Entities;
 using Calculator.Data;
 using Calculator.Entities;
 using System.Data.SqlClient;
+using EntityFramework.BulkInsert.Test.EnumTest;
 #endif
 
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
@@ -240,6 +241,34 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 var loans = new[] { loan };
 
                 ctx.BulkInsert(loans, SqlBulkCopyOptions.KeepIdentity);
+            }
+        }
+#endif
+
+#if EF5 || EF6
+
+        [Test]
+        public void EnumBulkInsert()
+        {
+            using (var context = new EnumTestContext())
+            {
+                context.Database.CreateIfNotExists();
+
+                var randomId = new Random().Next(int.MinValue, int.MaxValue);
+                var company = new Company
+                {
+                    CompanyId = randomId,
+                    CompanyName = "MY COMPANY",
+                    Size = CompanySize.ExtraLarge
+                };
+
+                var companies = new[] { company };
+
+                context.BulkInsert(companies, SqlBulkCopyOptions.KeepIdentity);
+
+                var dbCompany = context.Companies.FirstOrDefault(c => c.CompanyId == randomId);
+
+                Assert.IsNotNull(dbCompany);
             }
         }
 #endif
