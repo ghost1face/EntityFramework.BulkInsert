@@ -11,8 +11,13 @@ using System.Threading.Tasks;
 
 namespace EntityFramework.BulkInsert.Providers
 {
-    public class EfSqlBulkInsertProviderWithMappedDataReader : ProviderBase<SqlConnection, SqlTransaction>
+    public class EfSqlBulkInsertProvider : ProviderBase<SqlConnection, SqlTransaction>
     {
+        public EfSqlBulkInsertProvider()
+        {
+            SetProviderIdentifier("System.Data.SqlClient.SqlConnection");
+        }
+
         /// <summary>
         /// Runs sql bulk insert using custom IDataReader
         /// </summary>

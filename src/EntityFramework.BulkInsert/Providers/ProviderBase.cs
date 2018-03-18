@@ -20,6 +20,8 @@ namespace EntityFramework.BulkInsert.Providers
 
         public BulkInsertOptions Options { get; set; }
 
+        public string ProviderIdentifier { get; private set; }
+
         /// <summary>
         /// Connection string which current dbcontext is using
         /// </summary>
@@ -27,7 +29,8 @@ namespace EntityFramework.BulkInsert.Providers
         {
             get
             {
-                return (string)DbConnection.GetPrivateFieldValue("_connectionString");
+                return DbConnection.ConnectionString;
+                //return (string)DbConnection.GetPrivateFieldValue("_connectionString");
             }
         }
 
@@ -106,6 +109,15 @@ namespace EntityFramework.BulkInsert.Providers
         {
             Context = context;
             return this;
+        }
+
+        /// <summary>
+        /// Sets the ProviderInvariantName for the underlying provider.
+        /// </summary>
+        /// <param name="providerInvariantName"></param>
+        public void SetProviderIdentifier(string providerInvariantName)
+        {
+            ProviderIdentifier = providerInvariantName;
         }
 
         /// <summary>

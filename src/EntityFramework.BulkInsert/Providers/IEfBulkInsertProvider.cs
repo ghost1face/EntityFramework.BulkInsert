@@ -9,32 +9,38 @@ namespace EntityFramework.BulkInsert.Providers
     public interface IEfBulkInsertProvider
     {
         /// <summary>
-        /// 
+        /// Gets a connection from the provider.
         /// </summary>
         /// <returns></returns>
         IDbConnection GetConnection();
 
         /// <summary>
-        /// 
+        /// Executes a bulk insert command from the provider.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entities"></param>
+        /// <typeparam name="T">Entity type.</typeparam>
+        /// <param name="entities">Entities to insert.</param>
         void Run<T>(IEnumerable<T> entities);
 
         /// <summary>
-        /// 
+        /// Executes a bulk insert command with a transaction from the provider.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entities"></param>
-        /// <param name="transaction"></param>
+        /// <typeparam name="T">Entity type.</typeparam>
+        /// <param name="entities">Entities to insert.</param>
+        /// <param name="transaction">Transaction to use for the insert.</param>
         void Run<T>(IEnumerable<T> entities, IDbTransaction transaction);
 
         /// <summary>
-        /// 
+        /// Sets the database context.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">DbContext to set.</param>
         /// <returns></returns>
         IEfBulkInsertProvider SetContext(DbContext context);
+
+        /// <summary>
+        /// Sets the provider invariant name.
+        /// </summary>
+        /// <param name="providerInvariantName"></param>
+        void SetProviderIdentifier(string providerInvariantName);
 
 #if NET45
 
@@ -74,13 +80,18 @@ namespace EntityFramework.BulkInsert.Providers
 #endif
 
         /// <summary>
-        /// Current DbContext
+        /// Current DbContext.
         /// </summary>
         DbContext Context { get; }
 
         /// <summary>
-        /// 
+        /// Bulk insert options.
         /// </summary>
         BulkInsertOptions Options { get; set; }
+
+        /// <summary>
+        /// The provider identifier.
+        /// </summary>
+        string ProviderIdentifier { get; }
     }
 }

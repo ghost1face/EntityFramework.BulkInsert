@@ -2,7 +2,7 @@
 
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert.SqlServer
 {
-    public class SqlBulkInsertWithMappedDataReader : BulkInsertTestBase<EfSqlBulkInsertProviderWithMappedDataReader, SqlContext>
+    public class SqlBulkInsertWithMappedDataReader : BulkInsertTestBase<EfSqlBulkInsertProvider, SqlContext>
     {
         protected override string ProviderConnectionType
         {

@@ -2,7 +2,7 @@
 
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert.SqlServer
 {
-    public class SqlBulkInsertWithMappedDataReaderPerformance : PerformanceTestBase<EfSqlBulkInsertProviderWithMappedDataReader>
+    public class SqlBulkInsertWithMappedDataReaderPerformance : PerformanceTestBase<EfSqlBulkInsertProvider>
     {
         protected override string ProviderConnectionType
         {
