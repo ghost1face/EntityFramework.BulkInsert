@@ -1,6 +1,7 @@
 ﻿using EntityFramework.BulkInsert.Helpers;
 using EntityFramework.BulkInsert.Providers;
 using MySql.Data.MySqlClient;
+using MySql.Data.Types;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;  // TODO: remove this dependency, abstract it
@@ -19,41 +20,27 @@ namespace EntityFramework.BulkInsert.MySql
             SetProviderIdentifier("MySql.Data.MySqlClient.MySqlConnection");
         }
 
-        public override void Run<T>(IEnumerable<T> entities)
-        {
-            using (var dbConnection = GetConnection())
-            {
-                dbConnection.Open();
-
-                if ((Options.SqlBulkCopyOptions & SqlBulkCopyOptions.UseInternalTransaction) > 0)
-                {
-                    using (var transaction = dbConnection.BeginTransaction())
-                    {
-                        try
-                        {
-                            Run(entities, (MySqlConnection)dbConnection, (MySqlTransaction)transaction);
-                        }
-                        catch (Exception)
-                        {
-                            if (transaction.Connection != null)
-                            {
-                                transaction.Rollback();
-                            }
-                            throw;
-                        }
-                    }
-                }
-                else
-                {
-                    Run(entities, (MySqlConnection)dbConnection, null);
-                }
-            }
-        }
-
         public override void Run<T>(IEnumerable<T> entities, MySqlTransaction transaction)
         {
             Run(entities, transaction.Connection, transaction);
         }
+
+#if NET45
+        public override Task RunAsync<T>(IEnumerable<T> entities, MySqlTransaction transaction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object GetSqlGeography(string wkt, int srid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object GetSqlGeometry(string wkt, int srid)
+        {
+            throw new NotImplementedException();
+        }
+#endif
 
         protected override MySqlConnection CreateConnection()
         {
@@ -139,6 +126,69 @@ namespace EntityFramework.BulkInsert.MySql
                 }
             }
         }
+
+#if NET45
+        private async Task RunAsync<T>(IEnumerable<T> entities, MySqlConnection connection, MySqlTransaction transaction)
+        {
+            //bool runIdentityScripts;
+            bool keepIdentity = /*runIdentityScripts =*/ (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            bool keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
+
+            // TODO: May remove this, this should be opened higher up the stack
+            if (connection.State != System.Data.ConnectionState.Open)
+                await connection.OpenAsync().ConfigureAwait(false);
+
+            using (var reader = new MappedDataReader<T>(entities, this))
+            {
+                var columns = reader.Cols
+                    .Where(x => !x.Value.Computed && (!x.Value.IsIdentity || keepIdentity))
+                    .ToArray();
+
+                // INSERT INTO [TableName] (column list)
+                var insert = new StringBuilder($"INSERT INTO {reader.TableName} ")
+                    .Append("(")
+                    .Append(string.Join(",", columns.Select(col => col.Value.ColumnName)))
+                    .Append(")")
+                    .Append(" VALUES")
+                    .ToString();
+
+                int i = 0;
+                long rowsCopied = 0;
+                var rows = new List<string>();
+                while (reader.Read())
+                {
+                    var values = new List<string>();
+                    foreach (var col in columns)
+                    {
+                        var value = reader.GetValue(col.Key);
+                        var type = col.Value.Type;
+
+                        AddParameter(type, value, values);
+                    }
+
+                    rows.Add("(" + string.Join(",", values) + ")");
+
+                    i++;
+                    if (i == Options.NotifyAfter && Options.Callback != null)
+                    {
+                        using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                        rowsCopied += i;
+                        Options.Callback(this, new SqlRowsCopiedEventArgs(rowsCopied));
+                        i = 0;
+                        rows.Clear();
+                    }
+                }
+
+                if (rows.Any())
+                {
+                    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                        await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+                }
+            }
+        }
+#endif
 
         private void AddParameter(Type type, object value, List<string> values)
         {

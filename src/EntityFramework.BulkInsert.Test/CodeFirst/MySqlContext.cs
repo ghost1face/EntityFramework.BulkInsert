@@ -20,10 +20,6 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
         {
 
         }
-
-#if NET45
-        public DbSet<PinPoint> PinPoints { get; set; }
-#endif
     }
 
 #if EF6

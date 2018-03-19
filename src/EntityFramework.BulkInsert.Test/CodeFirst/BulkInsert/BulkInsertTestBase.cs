@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using EntityFramework.BulkInsert.Exceptions;
 #if NET45
+using System.Threading.Tasks;
 #if EF6
 using System.Data.Entity.Spatial;
 #endif
@@ -27,7 +28,6 @@ using NUnit.Framework;
 using Aske.Persistence.Entities;
 using Calculator.Data;
 using Calculator.Entities;
-using System.Data.SqlClient;
 using EntityFramework.BulkInsert.Test.EnumTest;
 #endif
 
@@ -347,7 +347,30 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                     Coordinates = DbGeography.FromText("POINT(-122.336106 47.605049)")
                 };
 
-                ctx.BulkInsert(new [] { pin});
+                ctx.BulkInsert(new[] { pin });
+            }
+        }
+
+        [Test]
+        public async Task BulkInsertAsyncWithCallback()
+        {
+            using (var ctx = GetContext())
+            {
+                var pages = CreatePages(500);
+                int i = 0;
+                var options = new BulkInsertOptions
+                {
+                    Callback = (sender, e) =>
+                    {
+                        Console.WriteLine(sender);
+                        Console.WriteLine("Rows copied: {0}", e.RowsCopied);
+                        ++i;
+                    },
+                    NotifyAfter = 10
+                };
+                await ctx.BulkInsertAsync(pages, options);
+
+                Assert.AreEqual(50, i);
             }
         }
 #endif
