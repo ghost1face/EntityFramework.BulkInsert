@@ -18,7 +18,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
     {
         public MySqlContext() : base("MySqlTestContext")
         {
-
+            
         }
     }
 
@@ -31,7 +31,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
                 nameof(global::MySql.Data.MySqlClient),
                 new global::MySql.Data.MySqlClient.MySqlProviderServices()
             );
-
+            
             SetExecutionStrategy(nameof(global::MySql.Data.MySqlClient), () => new DefaultExecutionStrategy());
         }
     }

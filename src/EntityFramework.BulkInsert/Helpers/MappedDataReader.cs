@@ -23,6 +23,7 @@ namespace EntityFramework.BulkInsert.Helpers
     public class MappedDataReader<T> : IDataReader
     {
         private readonly IEnumerator<T> _enumerator;
+        private Dictionary<int, Func<T, object>> _currentEntityTypeSelectors;
 
         public Dictionary<Type, Dictionary<int, Func<T, object>>> Selectors { get; private set; }
 
@@ -157,7 +158,6 @@ namespace EntityFramework.BulkInsert.Helpers
             _enumerator.Dispose();
         }
 
-        private Dictionary<int, Func<T, object>> _currentEntityTypeSelectors;
         public bool Read()
         {
             var read = _enumerator.MoveNext();
@@ -191,14 +191,12 @@ namespace EntityFramework.BulkInsert.Helpers
                     value = _currentEntityTypeSelectors[i](_enumerator.Current);
 
 #if NET45
-                    var dbgeo = value as DbGeography;
-                    if (dbgeo != null)
+                    if (value is DbGeography dbgeo)
                     {
                         return Provider.GetSqlGeography(dbgeo.WellKnownValue.WellKnownText, dbgeo.CoordinateSystemId);
                     }
 
-                    var dbgeom = value as DbGeometry;
-                    if (dbgeom != null)
+                    if (value is DbGeometry dbgeom)
                     {
                         return Provider.GetSqlGeometry(dbgeom.WellKnownValue.WellKnownText, dbgeom.CoordinateSystemId);
                     }

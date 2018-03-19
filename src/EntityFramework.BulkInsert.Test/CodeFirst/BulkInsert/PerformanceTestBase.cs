@@ -8,7 +8,9 @@ using NUnit.Framework;
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 {
     [TestFixture]
-    public abstract class PerformanceTestBase<T> : TestBase<TestBaseContext> where T : IEfBulkInsertProvider, new()
+    public abstract class PerformanceTestBase<T, TContext> : TestBase<TContext>
+        where T : IEfBulkInsertProvider, new()
+        where TContext : TestBaseContext, new()
     {
         public override void Setup()
         {

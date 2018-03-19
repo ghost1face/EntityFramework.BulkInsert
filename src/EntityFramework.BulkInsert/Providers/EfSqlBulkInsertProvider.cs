@@ -41,7 +41,10 @@ namespace EntityFramework.BulkInsert.Providers
                     sqlBulkCopy.NotifyAfter = Options.NotifyAfter;
                     if (Options.Callback != null)
                     {
-                        sqlBulkCopy.SqlRowsCopied += Options.Callback;
+                        sqlBulkCopy.SqlRowsCopied += (sender, args) =>
+                        {
+                            Options.Callback.Invoke(sender, new RowsCopiedEventArgs(args.RowsCopied));
+                        };
                     }
 
                     foreach (var kvp in reader.Cols)
@@ -106,7 +109,10 @@ namespace EntityFramework.BulkInsert.Providers
                     sqlBulkCopy.NotifyAfter = Options.NotifyAfter;
                     if (Options.Callback != null)
                     {
-                        sqlBulkCopy.SqlRowsCopied += Options.Callback;
+                        sqlBulkCopy.SqlRowsCopied += (sender, args) =>
+                        {
+                            Options.Callback.Invoke(sender, new RowsCopiedEventArgs(args.RowsCopied));
+                        };
                     }
 
                     foreach (var kvp in reader.Cols)

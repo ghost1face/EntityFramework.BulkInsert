@@ -144,7 +144,7 @@ namespace EntityFramework.BulkInsert.Test
             {
                 using (var reader = new MappedDataReader<TestUser>(new[] { user, emptyUser }, GetDummyProvider(ctx)))
                 {
-                    Assert.AreEqual(11, reader.FieldCount);
+                    Assert.AreEqual(10, reader.FieldCount);
 
                     while (reader.Read())
                     {

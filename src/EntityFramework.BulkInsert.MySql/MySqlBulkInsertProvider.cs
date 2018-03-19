@@ -4,7 +4,8 @@ using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;  // TODO: remove this dependency, abstract it
+using System.Data.SqlClient;
+//using System.Data.SqlClient;  // TODO: remove this dependency, abstract it
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace EntityFramework.BulkInsert.MySql
 #if NET45
         public override Task RunAsync<T>(IEnumerable<T> entities, MySqlTransaction transaction)
         {
-            throw new NotImplementedException();
+            return RunAsync(entities, transaction.Connection, transaction);
         }
 
         public override object GetSqlGeography(string wkt, int srid)
@@ -38,7 +39,9 @@ namespace EntityFramework.BulkInsert.MySql
 
         public override object GetSqlGeometry(string wkt, int srid)
         {
-            throw new NotImplementedException();
+            if (!MySqlGeometry.TryParse(wkt, out MySqlGeometry value))
+                return null;
+            return value;
         }
 #endif
 
@@ -69,12 +72,8 @@ namespace EntityFramework.BulkInsert.MySql
 
         private void Run<T>(IEnumerable<T> entities, MySqlConnection connection, MySqlTransaction transaction)
         {
-            //bool runIdentityScripts;
-            bool keepIdentity = /*runIdentityScripts =*/ (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            bool keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
             bool keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
-
-            if (connection.State != System.Data.ConnectionState.Open)
-                connection.Open();
 
             using (var reader = new MappedDataReader<T>(entities, this))
             {
@@ -107,13 +106,20 @@ namespace EntityFramework.BulkInsert.MySql
                     rows.Add("(" + string.Join(",", values) + ")");
 
                     i++;
-                    if (i == Options.NotifyAfter && Options.Callback != null)
+
+                    if (i == Options.BatchSize)
                     {
                         using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
-                            cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQueryAsync();
 
-                        rowsCopied += i;
-                        Options.Callback(this, new SqlRowsCopiedEventArgs(rowsCopied));
+                        if (Options.Callback != null)
+                        {
+                            int batches = Options.BatchSize / Options.NotifyAfter;
+
+                            rowsCopied += i;
+                            Options.Callback(this, new RowsCopiedEventArgs(rowsCopied));
+                        }
+
                         i = 0;
                         rows.Clear();
                     }
@@ -130,13 +136,8 @@ namespace EntityFramework.BulkInsert.MySql
 #if NET45
         private async Task RunAsync<T>(IEnumerable<T> entities, MySqlConnection connection, MySqlTransaction transaction)
         {
-            //bool runIdentityScripts;
-            bool keepIdentity = /*runIdentityScripts =*/ (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            bool keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
             bool keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
-
-            // TODO: May remove this, this should be opened higher up the stack
-            if (connection.State != System.Data.ConnectionState.Open)
-                await connection.OpenAsync().ConfigureAwait(false);
 
             using (var reader = new MappedDataReader<T>(entities, this))
             {
@@ -169,16 +170,34 @@ namespace EntityFramework.BulkInsert.MySql
                     rows.Add("(" + string.Join(",", values) + ")");
 
                     i++;
-                    if (i == Options.NotifyAfter && Options.Callback != null)
+
+                    if (i == Options.BatchSize)
                     {
                         using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
                             await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
 
-                        rowsCopied += i;
-                        Options.Callback(this, new SqlRowsCopiedEventArgs(rowsCopied));
+                        if (Options.Callback != null)
+                        {
+                            int batches = Options.BatchSize / Options.NotifyAfter;
+
+                            rowsCopied += i;
+                            Options.Callback(this, new RowsCopiedEventArgs(rowsCopied));
+                        }
+
                         i = 0;
                         rows.Clear();
                     }
+
+                    //if (i == Options.NotifyAfter && Options.Callback != null)
+                    //{
+                    //    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                    //        await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+                    //    rowsCopied += i;
+                    //    Options.Callback(this, new RowsCopiedEventArgs(rowsCopied));
+                    //    i = 0;
+                    //    rows.Clear();
+                    //}
                 }
 
                 if (rows.Any())
@@ -192,7 +211,8 @@ namespace EntityFramework.BulkInsert.MySql
 
         private void AddParameter(Type type, object value, List<string> values)
         {
-            if (type == typeof(string) 
+            if (type == null 
+                || type == typeof(string)
                 || type == typeof(Guid?)
                 || type == typeof(Guid))
             {
@@ -224,6 +244,18 @@ namespace EntityFramework.BulkInsert.MySql
                     }
                 }
             }
+            else if (type.IsEnum)
+            {
+                if (value == null)
+                {
+                    values.Add("NULL");
+                }
+                else
+                {                  
+                    var enumUnderlyingType = type.GetEnumUnderlyingType();
+                    values.Add(Convert.ChangeType(value, enumUnderlyingType).ToString());
+                }
+            }
             else
             {
                 if (value == null)
@@ -239,7 +271,11 @@ namespace EntityFramework.BulkInsert.MySql
 
         private MySqlCommand CreateCommand(string commandText, MySqlConnection connection, MySqlTransaction transaction)
         {
-            var cmd = new MySqlCommand(commandText, connection);
+            var cmd = new MySqlCommand(commandText, connection)
+            {
+                CommandTimeout = Options.TimeOut
+            };
+
             if (transaction != null)
             {
                 cmd.Transaction = transaction;
@@ -253,6 +289,40 @@ namespace EntityFramework.BulkInsert.MySql
                 .Append(string.Join(",", rows))
                 .Append(";")
                 .ToString();
+        }
+
+        private MySqlEngine GetTableEngine(string schemaName, string tableName, MySqlConnection connection)
+        {
+            using (var cmd = GetTableEngineCommand(schemaName, tableName, connection))
+            {
+                var engine = cmd.ExecuteScalar();
+
+                Enum.TryParse(engine.ToString(), true, out MySqlEngine tableEngine);
+
+                return tableEngine;
+            }
+        }
+
+        private async Task<MySqlEngine> GetTableEngineAsync(string schemaName, string tableName, MySqlConnection connection)
+        {
+            using (var cmd = GetTableEngineCommand(schemaName, tableName, connection))
+            {
+                var engine = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
+
+                Enum.TryParse(engine.ToString(), true, out MySqlEngine tableEngine);
+
+                return tableEngine;
+            }
+        }
+
+        private MySqlCommand GetTableEngineCommand(string schemaName, string tableName, MySqlConnection connection)
+        {
+            var commandText = $@"select engine 
+                                from   information_schema.tables 
+                                where  table_schema = '{schemaName}'
+                                   and table_name = '{tableName}'";
+
+            return CreateCommand(commandText, connection, null);
         }
 
         private bool IsDateType(Type type)

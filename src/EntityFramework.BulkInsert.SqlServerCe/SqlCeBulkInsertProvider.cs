@@ -180,7 +180,7 @@ namespace EntityFramework.BulkInsert.SqlServerCe
                             if (i == Options.NotifyAfter && Options.Callback != null)
                             {
                                 rowsCopied += i;
-                                Options.Callback(this, new SqlRowsCopiedEventArgs(rowsCopied));
+                                Options.Callback(this, new RowsCopiedEventArgs(rowsCopied));
                                 i = 0;
                             }
                         }

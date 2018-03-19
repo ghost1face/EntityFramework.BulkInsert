@@ -28,7 +28,6 @@ using NUnit.Framework;
 using Aske.Persistence.Entities;
 using Calculator.Data;
 using Calculator.Entities;
-using EntityFramework.BulkInsert.Test.EnumTest;
 #endif
 
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
@@ -250,10 +249,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         [Test]
         public void EnumBulkInsert()
         {
-            using (var context = new EnumTestContext())
+            using (var ctx = GetContext())
             {
-                context.Database.CreateIfNotExists();
-
                 var randomId = new Random().Next(int.MinValue, int.MaxValue);
                 var company = new Company
                 {
@@ -264,9 +261,9 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 var companies = new[] { company };
 
-                context.BulkInsert(companies, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(companies, SqlBulkCopyOptions.KeepIdentity);
 
-                var dbCompany = context.Companies.FirstOrDefault(c => c.CompanyId == randomId);
+                var dbCompany = ctx.Companies.FirstOrDefault(c => c.CompanyId == randomId);
 
                 Assert.IsNotNull(dbCompany);
             }
