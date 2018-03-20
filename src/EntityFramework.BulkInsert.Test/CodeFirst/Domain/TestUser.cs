@@ -1,5 +1,5 @@
-﻿using System;
-using EntityFramework.BulkInsert.Test.Domain.ComplexTypes;
+﻿using EntityFramework.BulkInsert.Test.Domain.ComplexTypes;
+using System;
 
 namespace EntityFramework.BulkInsert.Test.Domain
 {

@@ -271,7 +271,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 #endif
 
         [Test]
-        public void MixedTransactionsCommit()
+        public virtual void MixedTransactionsCommit()
         {
             using (var ctx = GetContext())
             {

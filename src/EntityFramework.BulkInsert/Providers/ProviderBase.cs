@@ -75,26 +75,50 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="entities"></param>
         public virtual async Task RunAsync<T>(IEnumerable<T> entities)
         {
-            using (var dbConnection = GetConnection())
-            {
-                dbConnection.Open();
+            IDbConnection dbConnection = null;
 
-                using (var transaction = dbConnection.BeginTransaction())
+            if (Options.Connection == null)
+            {
+                dbConnection = GetConnection();
+            }
+            else
+                dbConnection = Options.Connection;
+
+            try
+            {
+
+                if (dbConnection.State != ConnectionState.Open)
+                    dbConnection.Open();
+
+                if (Options.Connection != null && Options.Transaction != null)
                 {
-                    try
+                    await RunAsync(entities, Options.Transaction);
+                }
+                else
+                {
+                    using (var transaction = dbConnection.BeginTransaction())
                     {
-                        await RunAsync(entities, transaction);
-                        transaction.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        if (transaction.Connection != null)
+                        try
                         {
-                            transaction.Rollback();
+                            await RunAsync(entities, transaction);
+                            transaction.Commit();
                         }
-                        throw;
+                        catch (Exception)
+                        {
+                            if (transaction.Connection != null)
+                            {
+                                transaction.Rollback();
+                            }
+                            throw;
+                        }
                     }
                 }
+            }
+            finally
+            {
+                // See if we made the connection and dispose if so
+                if (Options.Connection == null)
+                    dbConnection.Dispose();
             }
         }
 

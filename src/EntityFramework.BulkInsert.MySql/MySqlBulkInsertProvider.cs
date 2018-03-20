@@ -75,6 +75,7 @@ namespace EntityFramework.BulkInsert.MySql
             bool keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
             bool keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
 
+            // TODO: SET unique_checks=0;  SET foreign_key_checks=0;
             using (var reader = new MappedDataReader<T>(entities, this))
             {
                 var columns = reader.Cols
@@ -82,7 +83,8 @@ namespace EntityFramework.BulkInsert.MySql
                     .ToArray();
 
                 // INSERT INTO [TableName] (column list)
-                var insert = new StringBuilder($"INSERT INTO {reader.TableName} ")
+                var insert = new StringBuilder($"SET autocommit=0;")
+                    .Append($" INSERT INTO {reader.TableName} ")
                     .Append("(")
                     .Append(string.Join(",", columns.Select(col => col.Value.ColumnName)))
                     .Append(")")
@@ -107,7 +109,7 @@ namespace EntityFramework.BulkInsert.MySql
 
                     i++;
 
-                    if (i == Options.BatchSize)
+                    if (i == Options.BatchSize || i == Options.NotifyAfter)
                     {
                         using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
                             cmd.ExecuteNonQueryAsync();
@@ -146,7 +148,8 @@ namespace EntityFramework.BulkInsert.MySql
                     .ToArray();
 
                 // INSERT INTO [TableName] (column list)
-                var insert = new StringBuilder($"INSERT INTO {reader.TableName} ")
+                var insert = new StringBuilder(/*$"SET autocommit=0;"*/)
+                    .Append($" INSERT INTO {reader.TableName} ")
                     .Append("(")
                     .Append(string.Join(",", columns.Select(col => col.Value.ColumnName)))
                     .Append(")")
@@ -171,7 +174,7 @@ namespace EntityFramework.BulkInsert.MySql
 
                     i++;
 
-                    if (i == Options.BatchSize)
+                    if (i == Options.BatchSize || i == Options.NotifyAfter)
                     {
                         using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
                             await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
@@ -187,17 +190,6 @@ namespace EntityFramework.BulkInsert.MySql
                         i = 0;
                         rows.Clear();
                     }
-
-                    //if (i == Options.NotifyAfter && Options.Callback != null)
-                    //{
-                    //    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
-                    //        await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
-
-                    //    rowsCopied += i;
-                    //    Options.Callback(this, new RowsCopiedEventArgs(rowsCopied));
-                    //    i = 0;
-                    //    rows.Clear();
-                    //}
                 }
 
                 if (rows.Any())
@@ -211,7 +203,7 @@ namespace EntityFramework.BulkInsert.MySql
 
         private void AddParameter(Type type, object value, List<string> values)
         {
-            if (type == null 
+            if (type == null
                 || type == typeof(string)
                 || type == typeof(Guid?)
                 || type == typeof(Guid))
@@ -251,7 +243,7 @@ namespace EntityFramework.BulkInsert.MySql
                     values.Add("NULL");
                 }
                 else
-                {                  
+                {
                     var enumUnderlyingType = type.GetEnumUnderlyingType();
                     values.Add(Convert.ChangeType(value, enumUnderlyingType).ToString());
                 }
@@ -288,6 +280,7 @@ namespace EntityFramework.BulkInsert.MySql
             return new StringBuilder(insertHeader)
                 .Append(string.Join(",", rows))
                 .Append(";")
+                .AppendLine("COMMIT;")
                 .ToString();
         }
 
