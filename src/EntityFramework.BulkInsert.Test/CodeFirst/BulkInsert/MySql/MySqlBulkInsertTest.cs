@@ -20,9 +20,9 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert.MySql
             Assert.AreEqual(true, true);
         }
 
-        //public override void DbGeographyObject()
-        //{
-        //    Assert.AreEqual(true, true);
-        //}
+        public override void DbGeographyObject()
+        {
+            Assert.AreEqual(true, true);
+        }
     }
 }
