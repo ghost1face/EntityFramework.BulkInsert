@@ -113,7 +113,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         }
 
         [Test]
-        public void BulkInsertWithIdentityInsertOn()
+        public virtual void BulkInsertWithIdentityInsertOn()
         {
             using (var ctx = GetContext())
             {
@@ -510,9 +510,25 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         {
             using (var ctx = GetContext())
             {
+                var managerTable = ctx.Set<ManagerTPT>();
+                var manager = managerTable.FirstOrDefault(i => i.Id == 1);
+                if (manager == null)
+                {
+                    manager = new ManagerTPT
+                    {
+                        Id = 1,
+                        Name = "The boss",
+                        Rank = "High",
+                        JobTitle = "The manager"
+                    };
+
+                    managerTable.Add(manager);
+                    ctx.SaveChanges();
+                }
+
                 var employees = new List<WorkerTPT>();
 
-                var worker = new WorkerTPT { JobTitle = "Worker", Name = "Foo", Boss = new ManagerTPT { Id = 1, Name = "The boss", Rank = "High", JobTitle = "The manager" } };
+                var worker = new WorkerTPT { JobTitle = "Worker", Name = "Foo", Boss = manager };
                 employees.Add(worker);
 
                 ctx.BulkInsert(employees);

@@ -189,7 +189,6 @@ namespace EntityFramework.BulkInsert.Helpers
                 try
                 {
                     value = _currentEntityTypeSelectors[i](_enumerator.Current);
-
 #if NET45
                     if (value is DbGeography dbgeo)
                     {
@@ -211,10 +210,36 @@ namespace EntityFramework.BulkInsert.Helpers
                 // todo - option: copy referenced objects - if it improves performance
                 if (Cols[i].IsNavigationProperty)
                 {
+                    //return 0;
 
-                    return 0;
-                    //var prop = Cols[i].Type.GetProperty(Cols[i].TableMapping.Pk.Prop);
-                    //return prop.GetValue(value);
+                    var col = Cols[i];
+                    var pk = col.EntityMap.Pks.FirstOrDefault();
+                    var navigationType = col.Type;
+                    if (pk == null)
+                        return 0;
+
+                    if (!Selectors.TryGetValue(navigationType, out Dictionary<int, Func<T, object>> navSelectors))
+                    {
+                        if (pk == null)
+                            return 0;
+
+                        navSelectors = new Dictionary<int, Func<T, object>>();
+                        var x = Expression.Parameter(_enumerator.Current.GetType(), "x");
+
+                        var propNames = $"{col.PropertyName}.{pk.PropertyName}".Split('.');
+                        Expression propertyExpression = Expression.PropertyOrField(x, propNames[0]);
+                        propertyExpression = propNames.Skip(1).Aggregate(propertyExpression, Expression.PropertyOrField);
+
+                        var expression = Expression.Lambda<Func<T, object>>(Expression.Convert(propertyExpression, typeof(object)), x);
+                        var selector = expression.Compile();
+
+                        navSelectors[i] = selector;
+
+                        Selectors[navigationType] = navSelectors;
+                    }
+
+                    return navSelectors[i](_enumerator.Current);
+                    
                 }
 
                 return value;
