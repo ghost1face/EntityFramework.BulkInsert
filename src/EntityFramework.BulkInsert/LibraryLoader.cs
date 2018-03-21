@@ -17,7 +17,7 @@ namespace EntityFramework.BulkInsert
             {
                 Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory),
                 Environment.CurrentDirectory,
-                Assembly.GetExecutingAssembly().Location,
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 Environment.SystemDirectory,
             };
 
@@ -33,7 +33,7 @@ namespace EntityFramework.BulkInsert
                     Utilities.LoadNativeAssemblies(path);
                     break;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (totalCount < count - 1)
                         continue;
