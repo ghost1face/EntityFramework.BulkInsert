@@ -143,12 +143,15 @@ namespace EntityFramework.BulkInsert.MySql
 
             using (var reader = new MappedDataReader<T>(entities, this))
             {
+                // TODO: Optimizations based on table engine (MyISAM, InnoDB, etc)
+                //var tableEngine = await GetTableEngineAsync(reader.SchemaName, reader.TableName, connection);
+
                 var columns = reader.Cols
                     .Where(x => !x.Value.Computed && (!x.Value.IsIdentity || keepIdentity))
                     .ToArray();
 
                 // INSERT INTO [TableName] (column list)
-                var insert = new StringBuilder(/*$"SET autocommit=0;"*/)
+                var insert = new StringBuilder($"SET autocommit=0;")
                     .Append($" INSERT INTO {reader.TableName} ")
                     .Append("(")
                     .Append(string.Join(",", columns.Select(col => col.Value.ColumnName)))
