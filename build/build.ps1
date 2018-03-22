@@ -22,7 +22,7 @@ properties {
 		Root = "$ns\"; 
 		Name = "$ns.csproj"; 
 		TestsName = "$ns.Test"; 
-		Constants=""; 
+		Constants="NET45;EF6"; 
 		FinalDir="Net45"; 
 		NuGetDir = "net45"; 
 		Framework="net-4.5"; 
@@ -57,7 +57,7 @@ task Build -depends Clean {
 	Write-Host $assemblyInfoCs
 	
 	Write-Host
-	&"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\tf.exe" checkout $assemblyInfoCs
+	#&"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\tf.exe" checkout $assemblyInfoCs
 	#$minorVersion = GetVersion
 	Update-AssemblyInfoFiles "$sourceDir\$ns"
   
