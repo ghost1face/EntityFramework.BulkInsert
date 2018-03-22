@@ -121,9 +121,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="ProviderFactory.cs" />
-    <Compile Include="Providers\EfSqlBulkInsertProvider.cs" />
     <Compile Include="Providers\IEfBulkInsertProvider.cs" />
     <Compile Include="Providers\ProviderBase.cs" />
+    <Compile Include="Providers\SqlBulkInsertProvider.cs" />
     <Compile Include="RowsCopiedEventArgs.cs" />
     <Compile Include="RowsCopiedEventHandler.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />

@@ -40,7 +40,7 @@ namespace EntityFramework.BulkInsert.Providers
         }
 
 #if NET45
-
+        
         /// <summary>
         /// Get sql grography object from well known text
         /// </summary>

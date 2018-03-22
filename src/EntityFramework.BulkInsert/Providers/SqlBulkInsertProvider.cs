@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
-using EntityFramework.BulkInsert.Extensions;
 using EntityFramework.BulkInsert.Helpers;
 
 #if NET45
+#if EF6
 using Microsoft.SqlServer.Types;
+#endif
 using System.Threading.Tasks;
 #endif
 
 namespace EntityFramework.BulkInsert.Providers
 {
-    public class EfSqlBulkInsertProvider : ProviderBase<SqlConnection, SqlTransaction>
+    public class SqlBulkInsertProvider : ProviderBase<SqlConnection, SqlTransaction>
     {
-        public EfSqlBulkInsertProvider()
+        public SqlBulkInsertProvider()
         {
             SetProviderIdentifier("System.Data.SqlClient.SqlConnection");
         }

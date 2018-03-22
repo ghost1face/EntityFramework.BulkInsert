@@ -26,7 +26,7 @@ namespace EntityFramework.BulkInsert
                         _providers = new Dictionary<string, Func<IEfBulkInsertProvider>>();
 
                         // bundled providers
-                        Register<EfSqlBulkInsertProvider>();
+                        Register<SqlBulkInsertProvider>();
                         //Register<EfSqlCeBulkiInsertProvider>("System.Data.SqlServerCe.4.0");
                     }
                 }
