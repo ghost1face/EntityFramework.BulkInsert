@@ -207,11 +207,8 @@ namespace EntityFramework.BulkInsert.Helpers
                     return null;
                 }
 
-                // todo - option: copy referenced objects - if it improves performance
                 if (Cols[i].IsNavigationProperty)
                 {
-                    //return 0;
-
                     var col = Cols[i];
                     var pk = col.EntityMap.Pks.FirstOrDefault();
                     var navigationType = col.Type;

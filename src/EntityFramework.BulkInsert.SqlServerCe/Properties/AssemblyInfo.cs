@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("EntityFramework.BulkInsert.SqlServerCe")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Fast Bulk insert extension for MySql using EntityFramework 6")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("EntityFramework.BulkInsert.SqlServerCe")]
