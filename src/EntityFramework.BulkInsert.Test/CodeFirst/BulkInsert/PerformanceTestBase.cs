@@ -8,7 +8,9 @@ using NUnit.Framework;
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 {
     [TestFixture]
-    public abstract class PerformanceTestBase<T> : TestBase<TestBaseContext> where T : IEfBulkInsertProvider, new()
+    public abstract class PerformanceTestBase<T, TContext> : TestBase<TContext>
+        where T : IEfBulkInsertProvider, new()
+        where TContext : TestBaseContext, new()
     {
         public override void Setup()
         {
@@ -35,6 +37,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         [Category("PerformanceTest")]
         public void Insert500kPagesInTwoThreads()
         {
+            Console.WriteLine($"Provider: {ProviderConnectionType}");
+
             var t = new Thread(() => BulkInsertPages(250000));
             var t2 = new Thread(() => BulkInsertPages(250000));
 
@@ -53,6 +57,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         [Category("PerformanceTest")]
         public void Insert500kPagesInFiveThreads()
         {
+            Console.WriteLine($"Provider: {ProviderConnectionType}");
+
             var t = new Thread(() => BulkInsertPages(100000));
             var t2 = new Thread(() => BulkInsertPages(100000));
             var t3 = new Thread(() => BulkInsertPages(100000));
@@ -73,6 +79,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
             t4.Join();
             t5.Join();
             sw.Stop();
+
             Console.WriteLine("Total:{0}ms", sw.Elapsed.TotalMilliseconds);
         }
 
@@ -80,6 +87,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         [Category("PerformanceTest")]
         public void Insert500kPages()
         {
+            Console.WriteLine($"Provider: {ProviderConnectionType}");
             BulkInsertPages(500000);
         }
 
@@ -87,6 +95,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         [Category("PerformanceTest")]
         public void BulkInsertVsAddRange()
         {
+            Console.WriteLine($"Provider: {ProviderConnectionType}");
             var pagesCount = 1;
             for (int mul = 0; mul < 10; mul++)
             {

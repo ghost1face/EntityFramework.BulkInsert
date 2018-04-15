@@ -48,7 +48,8 @@ namespace EntityFramework.BulkInsert.SqlServerCe
             {
                 dbConnection.Open();
 
-                if ((Options.SqlBulkCopyOptions & SqlBulkCopyOptions.UseInternalTransaction) > 0)
+                var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+                if ((sqlBulkCopyOptions & SqlBulkCopyOptions.UseInternalTransaction) > 0)
                 {
                     using (var transaction = dbConnection.BeginTransaction())
                     {
@@ -84,7 +85,8 @@ namespace EntityFramework.BulkInsert.SqlServerCe
             {
                 dbConnection.Open();
 
-                if ((Options.SqlBulkCopyOptions & SqlBulkCopyOptions.UseInternalTransaction) > 0)
+                var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+                if ((sqlBulkCopyOptions & SqlBulkCopyOptions.UseInternalTransaction) > 0)
                 {
                     using (var transaction = dbConnection.BeginTransaction())
                     {
@@ -131,8 +133,9 @@ namespace EntityFramework.BulkInsert.SqlServerCe
         private void Run<T>(IEnumerable<T> entities, SqlCeConnection connection, SqlCeTransaction transaction)
         {
             bool runIdentityScripts;
-            bool keepIdentity = runIdentityScripts = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
-            var keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
+            var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+            bool keepIdentity = runIdentityScripts = (SqlBulkCopyOptions.KeepIdentity & sqlBulkCopyOptions) > 0;
+            var keepNulls = (SqlBulkCopyOptions.KeepNulls & sqlBulkCopyOptions) > 0;
 
             using (var reader = new MappedDataReader<T>(entities, this))
             {
@@ -180,7 +183,7 @@ namespace EntityFramework.BulkInsert.SqlServerCe
                             if (i == Options.NotifyAfter && Options.Callback != null)
                             {
                                 rowsCopied += i;
-                                Options.Callback(this, new SqlRowsCopiedEventArgs(rowsCopied));
+                                Options.Callback(this, new RowsCopiedEventArgs(rowsCopied));
                                 i = 0;
                             }
                         }
@@ -202,7 +205,7 @@ namespace EntityFramework.BulkInsert.SqlServerCe
 #if NET45
         public override Task RunAsync<T>(IEnumerable<T> entities, SqlCeTransaction transaction)
         {
-            Run(entities, (SqlCeConnection) transaction.Connection, transaction);
+            Run(entities, (SqlCeConnection)transaction.Connection, transaction);
 
             return Task.FromResult(0);
         }
@@ -265,6 +268,11 @@ namespace EntityFramework.BulkInsert.SqlServerCe
                 }
             }
             return colInfos;
+        }
+
+        private SqlBulkCopyOptions ToSqlBulkCopyOptions(BulkCopyOptions bulkCopyOptions)
+        {
+            return (SqlBulkCopyOptions)(int)bulkCopyOptions;
         }
     }
 }

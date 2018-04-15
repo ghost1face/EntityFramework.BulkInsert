@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using EntityFramework.BulkInsert.Extensions;
 #if NET45
 using System.Threading.Tasks;
 #endif
@@ -18,7 +17,12 @@ namespace EntityFramework.BulkInsert.Providers
         /// </summary>
         public DbContext Context { get; private set; }
 
+        /// <summary>
+        /// Bulk insert options.
+        /// </summary>
         public BulkInsertOptions Options { get; set; }
+
+        public string ProviderIdentifier { get; private set; }
 
         /// <summary>
         /// Connection string which current dbcontext is using
@@ -27,7 +31,7 @@ namespace EntityFramework.BulkInsert.Providers
         {
             get
             {
-                return (string)DbConnection.GetPrivateFieldValue("_connectionString");
+                return DbConnection.ConnectionString;
             }
         }
 
@@ -124,6 +128,15 @@ namespace EntityFramework.BulkInsert.Providers
         }
 
         /// <summary>
+        /// Sets the ProviderInvariantName for the underlying provider.
+        /// </summary>
+        /// <param name="providerInvariantName"></param>
+        public void SetProviderIdentifier(string providerInvariantName)
+        {
+            ProviderIdentifier = providerInvariantName;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
@@ -187,7 +200,7 @@ namespace EntityFramework.BulkInsert.Providers
                             throw;
                         }
                     }
-                    
+
                 }
                 finally
                 {

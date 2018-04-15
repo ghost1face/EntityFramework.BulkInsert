@@ -15,13 +15,17 @@ properties {
   $releaseDir = "$baseDir\Release"
   $workingDir = "$baseDir\Working"
   
-  $ns = "EntityFramework.BulkInsert"
+  $ns = $project
+  
+  if (!$ns) {
+	  $ns = "EntityFramework.BulkInsert"
+  }
   
   $builds = @(
     @{
 		Root = "$ns\"; 
 		Name = "$ns.csproj"; 
-		TestsName = "$ns.Test"; 
+		TestsName = "EntityFramework.BulkInsert.Test"; 
 		Constants="NET45;EF6"; 
 		FinalDir="Net45"; 
 		NuGetDir = "net45"; 
@@ -34,8 +38,13 @@ properties {
 
 task default -depends Test
 
+# Validate properties
+task Validate {
+	Assert ("EntityFramework.BulkInsert", "EntityFramework.BulkInsert.MySql", "EntityFramework.BulkInsert.SqlServerCe" -contains $ns) "Please provide a valid project parameter"
+}
+
 # Ensure a clean working directory
-task Clean {
+task Clean -depends Validate {
   Set-Location $baseDir
   
   if (Test-Path -path $workingDir)
@@ -56,9 +65,6 @@ task Build -depends Clean {
 	$assemblyInfoCs = "$sourceDir\$ns\Properties\AssemblyInfo.cs"
 	Write-Host $assemblyInfoCs
 	
-	Write-Host
-	#&"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\tf.exe" checkout $assemblyInfoCs
-	#$minorVersion = GetVersion
 	Update-AssemblyInfoFiles "$sourceDir\$ns"
   
 	foreach ($build in $builds)
@@ -83,7 +89,7 @@ task Package -depends Build {
 	$root = $build.Root
     $finalDir = $build.FinalDir
     
-	robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\Package\Bin\$finalDir /NP /XO /XF *.pri | Out-Default
+	robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\Package\Bin\$finalDir "$ns.*" /NP /XO /XF *.pri | Out-Default
   }
   
   if ($buildNuGet)
@@ -102,7 +108,7 @@ task Package -depends Build {
         
         foreach ($frameworkDir in $frameworkDirs)
         {
-          robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir /NP /XO /XF *.pri | Out-Default
+          robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir "$ns.*" /NP /XO /XF *.pri | Out-Default
         }
       }
     }

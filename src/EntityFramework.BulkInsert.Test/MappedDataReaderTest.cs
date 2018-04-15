@@ -69,10 +69,17 @@ namespace EntityFramework.BulkInsert.Test
             public DbContext Context { get; private set; }
             public BulkInsertOptions Options { get; set; }
 
+            public string ProviderIdentifier { get; private set; }
+
             public IEfBulkInsertProvider SetContext(DbContext context)
             {
                 Context = context;
                 return this;
+            }
+
+            public void SetProviderIdentifier(string providerInvariantName)
+            {
+                ProviderIdentifier = providerInvariantName;
             }
         }
 
@@ -126,7 +133,7 @@ namespace EntityFramework.BulkInsert.Test
         {
             var user = new TestUser
             {
-                Contact = new Contact { Address = new Address { City = "Tallinn", Country = "Estonia"}, PhoneNumber = "1234567"},
+                Contact = new Contact { Address = new Address { City = "Tallinn", Country = "Estonia" }, PhoneNumber = "1234567" },
                 FirstName = "Max",
                 LastName = "Lego",
                 Id = Guid.NewGuid()
@@ -137,8 +144,8 @@ namespace EntityFramework.BulkInsert.Test
             {
                 using (var reader = new MappedDataReader<TestUser>(new[] { user, emptyUser }, GetDummyProvider(ctx)))
                 {
-                    Assert.AreEqual(11, reader.FieldCount);
-                    
+                    Assert.AreEqual(10, reader.FieldCount);
+
                     while (reader.Read())
                     {
                         for (int i = 0; i < reader.FieldCount; ++i)

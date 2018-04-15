@@ -17,6 +17,9 @@ using EntityFramework.BulkInsert.Test.Domain.ComplexTypes;
 
 namespace EntityFramework.BulkInsert.Test.CodeFirst
 {
+#if EF6
+    [DbConfigurationType(typeof(SqlContextConfig))]
+#endif
     public class TestBaseContext : DbContext
     {
         public TestBaseContext() : base("TestContext")
@@ -52,6 +55,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst
         public DbSet<ContractKomb2> K2Contracts { get; set; }
 
         public DbSet<Foo> Foos { get; set; }
+
+        public DbSet<Company> Companies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder mb)
         {

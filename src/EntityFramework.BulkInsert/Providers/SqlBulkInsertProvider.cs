@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
-using EntityFramework.BulkInsert.Extensions;
 using EntityFramework.BulkInsert.Helpers;
 
 #if NET45
+#if EF6
 using Microsoft.SqlServer.Types;
+#endif
 using System.Threading.Tasks;
 #endif
 
 namespace EntityFramework.BulkInsert.Providers
 {
-    public class EfSqlBulkInsertProviderWithMappedDataReader : ProviderBase<SqlConnection, SqlTransaction>
+    public class SqlBulkInsertProvider : ProviderBase<SqlConnection, SqlTransaction>
     {
+        public SqlBulkInsertProvider()
+        {
+            SetProviderIdentifier("System.Data.SqlClient.SqlConnection");
+        }
+
         /// <summary>
         /// Runs sql bulk insert using custom IDataReader
         /// </summary>
@@ -21,10 +27,11 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="transaction"></param>
         public override void Run<T>(IEnumerable<T> entities, SqlTransaction transaction)
         {
-            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & sqlBulkCopyOptions) > 0;
             using (var reader = new MappedDataReader<T>(entities, this))
             {
-                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, Options.SqlBulkCopyOptions, transaction))
+                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, sqlBulkCopyOptions, transaction))
                 {
                     sqlBulkCopy.BulkCopyTimeout = Options.TimeOut;
                     sqlBulkCopy.BatchSize = Options.BatchSize;
@@ -36,7 +43,10 @@ namespace EntityFramework.BulkInsert.Providers
                     sqlBulkCopy.NotifyAfter = Options.NotifyAfter;
                     if (Options.Callback != null)
                     {
-                        sqlBulkCopy.SqlRowsCopied += Options.Callback;
+                        sqlBulkCopy.SqlRowsCopied += (sender, args) =>
+                        {
+                            Options.Callback.Invoke(sender, new RowsCopiedEventArgs(args.RowsCopied));
+                        };
                     }
 
                     foreach (var kvp in reader.Cols)
@@ -87,10 +97,11 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="transaction"></param>
         public override async Task RunAsync<T>(IEnumerable<T> entities, SqlTransaction transaction)
         {
-            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & sqlBulkCopyOptions) > 0;
             using (var reader = new MappedDataReader<T>(entities, this))
             {
-                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, Options.SqlBulkCopyOptions, transaction))
+                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, sqlBulkCopyOptions, transaction))
                 {
                     sqlBulkCopy.BulkCopyTimeout = Options.TimeOut;
                     sqlBulkCopy.BatchSize = Options.BatchSize;
@@ -101,7 +112,10 @@ namespace EntityFramework.BulkInsert.Providers
                     sqlBulkCopy.NotifyAfter = Options.NotifyAfter;
                     if (Options.Callback != null)
                     {
-                        sqlBulkCopy.SqlRowsCopied += Options.Callback;
+                        sqlBulkCopy.SqlRowsCopied += (sender, args) =>
+                        {
+                            Options.Callback.Invoke(sender, new RowsCopiedEventArgs(args.RowsCopied));
+                        };
                     }
 
                     foreach (var kvp in reader.Cols)
@@ -127,6 +141,11 @@ namespace EntityFramework.BulkInsert.Providers
         protected override SqlConnection CreateConnection()
         {
             return new SqlConnection(ConnectionString);
+        }
+
+        private SqlBulkCopyOptions ToSqlBulkCopyOptions(BulkCopyOptions bulkCopyOptions)
+        {
+            return (SqlBulkCopyOptions)(int)bulkCopyOptions;
         }
     }
 }

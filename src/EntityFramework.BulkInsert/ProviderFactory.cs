@@ -26,7 +26,7 @@ namespace EntityFramework.BulkInsert
                         _providers = new Dictionary<string, Func<IEfBulkInsertProvider>>();
 
                         // bundled providers
-                        Register<EfSqlBulkInsertProviderWithMappedDataReader>("System.Data.SqlClient.SqlConnection");
+                        Register<SqlBulkInsertProvider>();
                         //Register<EfSqlCeBulkiInsertProvider>("System.Data.SqlServerCe.4.0");
                     }
                 }
@@ -41,24 +41,22 @@ namespace EntityFramework.BulkInsert
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
-        public static void Register<T>(string name) where T : IEfBulkInsertProvider, new()
+        public static void Register<T>(string name)
+            where T : IEfBulkInsertProvider, new()
         {
             Providers[name] = () => new T();
         }
 
-        /*
-        public static void Register(Type type, string name)
+        /// <summary>
+        /// Register new bulk insert provider.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public static void Register<T>()
+            where T : IEfBulkInsertProvider, new()
         {
-            // todo - check if type is IEfBulkInsertProvider
-
-            var body = Expression.New(type);
-
-            Expression<Func<IEfBulkInsertProvider>> ex = Expression.Lambda<Func<IEfBulkInsertProvider>>(body);
-            var f = ex.Compile();
-
-            Providers[name] = f;
+            var instance = new T();
+            Providers[instance.ProviderIdentifier] = () => new T();
         }
-        */
 
         /// <summary>
         /// Get bulkinsert porvider by connection used in context

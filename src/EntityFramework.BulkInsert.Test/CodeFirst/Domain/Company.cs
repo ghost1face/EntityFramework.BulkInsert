@@ -1,4 +1,4 @@
-﻿namespace EntityFramework.BulkInsert.Test.EnumTest
+﻿namespace EntityFramework.BulkInsert.Test.Domain
 {
     public class Company
     {

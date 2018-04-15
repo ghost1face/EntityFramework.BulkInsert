@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using EntityFramework.BulkInsert.Exceptions;
 #if NET45
+using System.Threading.Tasks;
 #if EF6
 using System.Data.Entity.Spatial;
 #endif
@@ -27,8 +28,6 @@ using NUnit.Framework;
 using Aske.Persistence.Entities;
 using Calculator.Data;
 using Calculator.Entities;
-using System.Data.SqlClient;
-using EntityFramework.BulkInsert.Test.EnumTest;
 #endif
 
 namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
@@ -114,14 +113,14 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         }
 
         [Test]
-        public void BulkInsertWithIdentityInsertOn()
+        public virtual void BulkInsertWithIdentityInsertOn()
         {
             using (var ctx = GetContext())
             {
                 var newGuid = Guid.NewGuid();
                 var testUser = new TestUser { Id = newGuid, CreatedAt = DateTime.Now };
                 var users = new[] { testUser };
-                ctx.BulkInsert(users, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(users, BulkCopyOptions.KeepIdentity);
 
                 var lastinsert = ctx.Users.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
                 Assert.AreEqual(testUser.Id, lastinsert.Id);
@@ -198,7 +197,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
             {
                 var post = new Post { Oid = Guid.NewGuid(), StartDate = DateTime.Now, EndDate = DateTime.Now };
                 var posts = new[] { post };
-                ctx.BulkInsert(posts, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(posts, BulkCopyOptions.KeepIdentity);
             }
         }
 
@@ -240,7 +239,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 };
                 var loans = new[] { loan };
 
-                ctx.BulkInsert(loans, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(loans, BulkCopyOptions.KeepIdentity);
             }
         }
 #endif
@@ -250,10 +249,8 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         [Test]
         public void EnumBulkInsert()
         {
-            using (var context = new EnumTestContext())
+            using (var ctx = GetContext())
             {
-                context.Database.CreateIfNotExists();
-
                 var randomId = new Random().Next(int.MinValue, int.MaxValue);
                 var company = new Company
                 {
@@ -264,9 +261,9 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 var companies = new[] { company };
 
-                context.BulkInsert(companies, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(companies, BulkCopyOptions.KeepIdentity);
 
-                var dbCompany = context.Companies.FirstOrDefault(c => c.CompanyId == randomId);
+                var dbCompany = ctx.Companies.FirstOrDefault(c => c.CompanyId == randomId);
 
                 Assert.IsNotNull(dbCompany);
             }
@@ -274,7 +271,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 #endif
 
         [Test]
-        public void MixedTransactionsCommit()
+        public virtual void MixedTransactionsCommit()
         {
             using (var ctx = GetContext())
             {
@@ -347,7 +344,30 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                     Coordinates = DbGeography.FromText("POINT(-122.336106 47.605049)")
                 };
 
-                ctx.BulkInsert(new [] { pin});
+                ctx.BulkInsert(new[] { pin });
+            }
+        }
+
+        [Test]
+        public async Task BulkInsertAsyncWithCallback()
+        {
+            using (var ctx = GetContext())
+            {
+                var pages = CreatePages(500);
+                int i = 0;
+                var options = new BulkInsertOptions
+                {
+                    Callback = (sender, e) =>
+                    {
+                        Console.WriteLine(sender);
+                        Console.WriteLine("Rows copied: {0}", e.RowsCopied);
+                        ++i;
+                    },
+                    NotifyAfter = 10
+                };
+                await ctx.BulkInsertAsync(pages, options);
+
+                Assert.AreEqual(50, i);
             }
         }
 #endif
@@ -490,9 +510,25 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
         {
             using (var ctx = GetContext())
             {
+                var managerTable = ctx.Set<ManagerTPT>();
+                var manager = managerTable.FirstOrDefault(i => i.Id == 1);
+                if (manager == null)
+                {
+                    manager = new ManagerTPT
+                    {
+                        Id = 1,
+                        Name = "The boss",
+                        Rank = "High",
+                        JobTitle = "The manager"
+                    };
+
+                    managerTable.Add(manager);
+                    ctx.SaveChanges();
+                }
+
                 var employees = new List<WorkerTPT>();
 
-                var worker = new WorkerTPT { JobTitle = "Worker", Name = "Foo", Boss = new ManagerTPT { Id = 1, Name = "The boss", Rank = "High", JobTitle = "The manager" } };
+                var worker = new WorkerTPT { JobTitle = "Worker", Name = "Foo", Boss = manager };
                 employees.Add(worker);
 
                 ctx.BulkInsert(employees);
