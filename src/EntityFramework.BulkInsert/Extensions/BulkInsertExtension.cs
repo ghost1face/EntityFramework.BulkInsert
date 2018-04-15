@@ -68,6 +68,11 @@ namespace EntityFramework.BulkInsert.Extensions
         public static Task BulkInsertAsync<T>(this DbContext context, IEnumerable<T> entities, IDbTransaction transaction, SqlBulkCopyOptions sqlBulkCopyOptions = SqlBulkCopyOptions.Default, int? batchSize = null)
         {
             var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
+            if (transaction != null)
+            {
+                options.Connection = transaction.Connection;
+                options.Transaction = transaction;
+            }
             if (batchSize.HasValue)
             {
                 options.BatchSize = batchSize.Value;
