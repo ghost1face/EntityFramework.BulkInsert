@@ -27,10 +27,11 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="transaction"></param>
         public override void Run<T>(IEnumerable<T> entities, SqlTransaction transaction)
         {
-            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & sqlBulkCopyOptions) > 0;
             using (var reader = new MappedDataReader<T>(entities, this))
             {
-                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, Options.SqlBulkCopyOptions, transaction))
+                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, sqlBulkCopyOptions, transaction))
                 {
                     sqlBulkCopy.BulkCopyTimeout = Options.TimeOut;
                     sqlBulkCopy.BatchSize = Options.BatchSize;
@@ -96,10 +97,11 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="transaction"></param>
         public override async Task RunAsync<T>(IEnumerable<T> entities, SqlTransaction transaction)
         {
-            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
+            var sqlBulkCopyOptions = ToSqlBulkCopyOptions(Options.BulkCopyOptions);
+            var keepIdentity = (SqlBulkCopyOptions.KeepIdentity & sqlBulkCopyOptions) > 0;
             using (var reader = new MappedDataReader<T>(entities, this))
             {
-                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, Options.SqlBulkCopyOptions, transaction))
+                using (var sqlBulkCopy = new SqlBulkCopy(transaction.Connection, sqlBulkCopyOptions, transaction))
                 {
                     sqlBulkCopy.BulkCopyTimeout = Options.TimeOut;
                     sqlBulkCopy.BatchSize = Options.BatchSize;
@@ -139,6 +141,11 @@ namespace EntityFramework.BulkInsert.Providers
         protected override SqlConnection CreateConnection()
         {
             return new SqlConnection(ConnectionString);
+        }
+
+        private SqlBulkCopyOptions ToSqlBulkCopyOptions(BulkCopyOptions bulkCopyOptions)
+        {
+            return (SqlBulkCopyOptions)(int)bulkCopyOptions;
         }
     }
 }

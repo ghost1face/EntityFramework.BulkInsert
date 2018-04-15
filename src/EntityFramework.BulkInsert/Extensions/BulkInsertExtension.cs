@@ -35,7 +35,7 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <returns></returns>
         public static Task BulkInsertAsync<T>(this DbContext context, IEnumerable<T> entities, int? batchSize = null)
         {
-            return context.BulkInsertAsync(entities, SqlBulkCopyOptions.Default, batchSize);
+            return context.BulkInsertAsync(entities, BulkCopyOptions.Default, batchSize);
         }
 
         /// <summary>
@@ -44,11 +44,11 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="context"></param>
         /// <param name="entities"></param>
-        /// <param name="sqlBulkCopyOptions"></param>
+        /// <param name="bulkCopyOptions"></param>
         /// <param name="batchSize"></param>
-        public static Task BulkInsertAsync<T>(this DbContext context, IEnumerable<T> entities, SqlBulkCopyOptions sqlBulkCopyOptions, int? batchSize = null)
+        public static Task BulkInsertAsync<T>(this DbContext context, IEnumerable<T> entities, BulkCopyOptions bulkCopyOptions, int? batchSize = null)
         {
-            var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
+            var options = new BulkInsertOptions { BulkCopyOptions = bulkCopyOptions };
             if (batchSize.HasValue)
             {
                 options.BatchSize = batchSize.Value;
@@ -63,11 +63,11 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <param name="context"></param>
         /// <param name="entities"></param>
         /// <param name="transaction"></param>
-        /// <param name="sqlBulkCopyOptions"></param>
+        /// <param name="bulkCopyOptions"></param>
         /// <param name="batchSize"></param>
-        public static Task BulkInsertAsync<T>(this DbContext context, IEnumerable<T> entities, IDbTransaction transaction, SqlBulkCopyOptions sqlBulkCopyOptions = SqlBulkCopyOptions.Default, int? batchSize = null)
+        public static Task BulkInsertAsync<T>(this DbContext context, IEnumerable<T> entities, IDbTransaction transaction, BulkCopyOptions bulkCopyOptions = BulkCopyOptions.Default, int? batchSize = null)
         {
-            var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
+            var options = new BulkInsertOptions { BulkCopyOptions = bulkCopyOptions };
             if (transaction != null)
             {
                 options.Connection = transaction.Connection;
@@ -105,7 +105,7 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <param name="batchSize"></param>
         public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, int? batchSize = null)
         {
-            context.BulkInsert(entities, SqlBulkCopyOptions.Default, batchSize);
+            context.BulkInsert(entities, BulkCopyOptions.Default, batchSize);
         }
 
         /// <summary>
@@ -116,10 +116,10 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <param name="entities"></param>
         /// <param name="sqlBulkCopyOptions"></param>
         /// <param name="batchSize"></param>
-        public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, SqlBulkCopyOptions sqlBulkCopyOptions, int? batchSize = null)
+        public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, BulkCopyOptions bulkCopyOptions, int? batchSize = null)
         {
 
-            var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
+            var options = new BulkInsertOptions { BulkCopyOptions = bulkCopyOptions };
             if (batchSize.HasValue)
             {
                 options.BatchSize = batchSize.Value;
@@ -134,11 +134,11 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <param name="context"></param>
         /// <param name="entities"></param>
         /// <param name="transaction"></param>
-        /// <param name="sqlBulkCopyOptions"></param>
+        /// <param name="bulkCopyOptions"></param>
         /// <param name="batchSize"></param>
-        public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, IDbTransaction transaction, SqlBulkCopyOptions sqlBulkCopyOptions = SqlBulkCopyOptions.Default, int? batchSize = null)
+        public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities, IDbTransaction transaction, BulkCopyOptions bulkCopyOptions = BulkCopyOptions.Default, int? batchSize = null)
         {
-            var options = new BulkInsertOptions { SqlBulkCopyOptions = sqlBulkCopyOptions };
+            var options = new BulkInsertOptions { BulkCopyOptions = bulkCopyOptions };
             if (transaction != null)
             {
                 options.Connection = transaction.Connection;
@@ -151,14 +151,5 @@ namespace EntityFramework.BulkInsert.Extensions
             }
             context.BulkInsert(entities, options);
         }
-
-        /*
-        public static void BulkInsert<T>(this DbContext context, IEnumerable<T> entities,
-            Func<BulkInsertOptions, BulkInsertOptions> options)
-        {
-            var bulkInsert = ProviderFactory.Get(context);
-            bulkInsert.Run(entities, options(new BulkInsertOptions()));
-        }
-         * */
     }
 }

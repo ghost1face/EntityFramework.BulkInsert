@@ -120,7 +120,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 var newGuid = Guid.NewGuid();
                 var testUser = new TestUser { Id = newGuid, CreatedAt = DateTime.Now };
                 var users = new[] { testUser };
-                ctx.BulkInsert(users, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(users, BulkCopyOptions.KeepIdentity);
 
                 var lastinsert = ctx.Users.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
                 Assert.AreEqual(testUser.Id, lastinsert.Id);
@@ -197,7 +197,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
             {
                 var post = new Post { Oid = Guid.NewGuid(), StartDate = DateTime.Now, EndDate = DateTime.Now };
                 var posts = new[] { post };
-                ctx.BulkInsert(posts, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(posts, BulkCopyOptions.KeepIdentity);
             }
         }
 
@@ -239,7 +239,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 };
                 var loans = new[] { loan };
 
-                ctx.BulkInsert(loans, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(loans, BulkCopyOptions.KeepIdentity);
             }
         }
 #endif
@@ -261,7 +261,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
 
                 var companies = new[] { company };
 
-                ctx.BulkInsert(companies, SqlBulkCopyOptions.KeepIdentity);
+                ctx.BulkInsert(companies, BulkCopyOptions.KeepIdentity);
 
                 var dbCompany = ctx.Companies.FirstOrDefault(c => c.CompanyId == randomId);
 

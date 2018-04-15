@@ -4,8 +4,6 @@ using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-//using System.Data.SqlClient;  // TODO: remove this dependency, abstract it
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace EntityFramework.BulkInsert.MySql
 {
-    // TODO: Async Support
     public class MySqlBulkInsertProvider : ProviderBase<MySqlConnection, MySqlTransaction>
     {
         public MySqlBulkInsertProvider()
@@ -72,18 +69,19 @@ namespace EntityFramework.BulkInsert.MySql
 
         private void Run<T>(IEnumerable<T> entities, MySqlConnection connection, MySqlTransaction transaction)
         {
-            bool keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
-            bool keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
+            bool keepIdentity = (BulkCopyOptions.KeepIdentity & Options.BulkCopyOptions) > 0;
+            bool keepNulls = (BulkCopyOptions.KeepNulls & Options.BulkCopyOptions) > 0;
 
-            // TODO: SET unique_checks=0;  SET foreign_key_checks=0;
             using (var reader = new MappedDataReader<T>(entities, this))
             {
+                var tableEngine = GetTableEngine(connection.Database, reader.TableName, connection);
+
                 var columns = reader.Cols
                     .Where(x => !x.Value.Computed && (!x.Value.IsIdentity || keepIdentity))
                     .ToArray();
 
                 // INSERT INTO [TableName] (column list)
-                var insert = new StringBuilder($"SET autocommit=0;")
+                var insert = new StringBuilder()
                     .Append($" INSERT INTO {reader.TableName} ")
                     .Append("(")
                     .Append(string.Join(",", columns.Select(col => col.Value.ColumnName)))
@@ -111,7 +109,7 @@ namespace EntityFramework.BulkInsert.MySql
 
                     if (i == Options.BatchSize || i == Options.NotifyAfter)
                     {
-                        using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                        using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows, tableEngine), connection, transaction))
                             cmd.ExecuteNonQueryAsync();
 
                         if (Options.Callback != null)
@@ -129,7 +127,7 @@ namespace EntityFramework.BulkInsert.MySql
 
                 if (rows.Any())
                 {
-                    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows, tableEngine), connection, transaction))
                         cmd.ExecuteNonQuery();
                 }
             }
@@ -138,20 +136,19 @@ namespace EntityFramework.BulkInsert.MySql
 #if NET45
         private async Task RunAsync<T>(IEnumerable<T> entities, MySqlConnection connection, MySqlTransaction transaction)
         {
-            bool keepIdentity = (SqlBulkCopyOptions.KeepIdentity & Options.SqlBulkCopyOptions) > 0;
-            bool keepNulls = (SqlBulkCopyOptions.KeepNulls & Options.SqlBulkCopyOptions) > 0;
+            bool keepIdentity = (BulkCopyOptions.KeepIdentity & Options.BulkCopyOptions) > 0;
+            bool keepNulls = (BulkCopyOptions.KeepNulls & Options.BulkCopyOptions) > 0;
 
             using (var reader = new MappedDataReader<T>(entities, this))
             {
-                // TODO: Optimizations based on table engine (MyISAM, InnoDB, etc)
-                //var tableEngine = await GetTableEngineAsync(reader.SchemaName, reader.TableName, connection);
+                var tableEngine = await GetTableEngineAsync(connection.Database, reader.TableName, connection);
 
                 var columns = reader.Cols
                     .Where(x => !x.Value.Computed && (!x.Value.IsIdentity || keepIdentity))
                     .ToArray();
 
                 // INSERT INTO [TableName] (column list)
-                var insert = new StringBuilder($"SET autocommit=0;")
+                var insert = new StringBuilder()
                     .Append($" INSERT INTO {reader.TableName} ")
                     .Append("(")
                     .Append(string.Join(",", columns.Select(col => col.Value.ColumnName)))
@@ -179,7 +176,7 @@ namespace EntityFramework.BulkInsert.MySql
 
                     if (i == Options.BatchSize || i == Options.NotifyAfter)
                     {
-                        using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                        using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows, tableEngine), connection, transaction))
                             await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
 
                         if (Options.Callback != null)
@@ -197,7 +194,7 @@ namespace EntityFramework.BulkInsert.MySql
 
                 if (rows.Any())
                 {
-                    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows), connection, transaction))
+                    using (var cmd = CreateCommand(CreateInsertBatchText(insert, rows, tableEngine), connection, transaction))
                         await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
             }
@@ -278,13 +275,14 @@ namespace EntityFramework.BulkInsert.MySql
             return cmd;
         }
 
-        private string CreateInsertBatchText(string insertHeader, List<string> rows)
+        private string CreateInsertBatchText(string insertHeader, List<string> rows, MySqlEngine engine)
         {
-            return new StringBuilder(insertHeader)
-                .Append(string.Join(",", rows))
-                .Append(";")
-                .AppendLine("COMMIT;")
-                .ToString();
+            return GenerateSql(engine, Options.BulkCopyOptions, () => insertHeader + " " + string.Join(",", rows) + ";");
+            //return new StringBuilder(insertHeader)
+            //    .Append(string.Join(",", rows))
+            //    .Append(";")
+            //    .AppendLine("COMMIT;")
+            //    .ToString();
         }
 
         private MySqlEngine GetTableEngine(string schemaName, string tableName, MySqlConnection connection)
@@ -327,6 +325,44 @@ namespace EntityFramework.BulkInsert.MySql
                 return IsDateType(Nullable.GetUnderlyingType(type));
 
             return type == typeof(DateTime) || type == typeof(DateTimeOffset);
+        }
+
+        private string GenerateSql(MySqlEngine engine, BulkCopyOptions options, Func<string> statementGenerator)
+        {
+            switch (engine)
+            {
+                case MySqlEngine.InnoDB:
+                    return GenerateInnoDbOptimizations(options, statementGenerator);
+                case MySqlEngine.MyISAM:
+                    return statementGenerator();
+                default:
+                    return statementGenerator();
+            }
+        }
+
+        private string GenerateInnoDbOptimizations(BulkCopyOptions options, Func<string> statementGenerator)
+        {
+            bool checkConstraints = true;
+            if (!options.HasFlag(BulkCopyOptions.Default))
+            {
+                checkConstraints = options.HasFlag(BulkCopyOptions.CheckConstraints);
+            }
+
+            if (!checkConstraints)
+            {
+                return $@"
+SET autocommit=0;
+SET unique_checks=0;
+SET foreign_key_checks=0;
+{statementGenerator()}
+COMMIT;
+SET unique_checks=1;
+SET foreign_key_checks=1;";
+            }
+            return $@"
+SET autocommit=0;
+{statementGenerator()}
+COMMIT;";
         }
     }
 }

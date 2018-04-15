@@ -1,19 +1,18 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
 
 namespace EntityFramework.BulkInsert
 {
     public class BulkInsertOptions
     {
         /// <summary>
-        /// 
+        /// Batch size for bulk inserts.
         /// </summary>
         public int BatchSize { get; set; }
 
         /// <summary>
-        /// 
+        /// Bulk copy options.
         /// </summary>
-        public SqlBulkCopyOptions SqlBulkCopyOptions { get; set; }
+        public BulkCopyOptions BulkCopyOptions { get; set; }
 
         /// <summary>
         /// Number of the seconds for the operation to complete before it times out
@@ -42,7 +41,7 @@ namespace EntityFramework.BulkInsert
 
 #if !NET40
         /// <summary>
-        /// 
+        /// Enable streaming.
         /// </summary>
         public bool EnableStreaming { get; set; }
 #endif
@@ -50,73 +49,11 @@ namespace EntityFramework.BulkInsert
         public BulkInsertOptions()
         {
             BatchSize = BulkInsertDefaults.BatchSize;
-            SqlBulkCopyOptions = BulkInsertDefaults.SqlBulkCopyOptions;
+            BulkCopyOptions = BulkInsertDefaults.BulkCopyOptions;
             TimeOut = BulkInsertDefaults.TimeOut;
             NotifyAfter = BulkInsertDefaults.NotifyAfter;
             Connection = null;
             Transaction = null;
         }
-        /*
-
-        /// <summary>
-        /// Sets batch size
-        /// </summary>
-        /// <param name="batchSize"></param>
-        /// <returns></returns>
-        public BulkInsertOptions BatchSize(int batchSize)
-        {
-            BatchSizeValue = batchSize;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets sql bulk copy timeout in seconds
-        /// </summary>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
-        public BulkInsertOptions TimeOut(int timeout)
-        {
-            TimeOutValue = timeout;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets SqlBulkCopy options
-        /// </summary>
-        /// <param name="sqlBulkCopyOptions"></param>
-        /// <returns></returns>
-        public BulkInsertOptions SqlBulkCopyOptions(SqlBulkCopyOptions sqlBulkCopyOptions)
-        {
-            SqlBulkCopyOptionsValue = sqlBulkCopyOptions;
-            return this;
-        }
-
-        /// <summary>
-        /// Sets callback method for sql bulk insert
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <param name="interval">Numbers of rows processed before callback is invoked</param>
-        /// <returns></returns>
-        public BulkInsertOptions Callback(SqlRowsCopiedEventHandler callback, int interval)
-        {
-            CallbackMethod = callback;
-            NotifyAfterValue = interval;
-
-            return this;
-        }
-
-#if !NET40
-        /// <summary>
-        /// Sets batch size
-        /// </summary>
-        /// <param name="enableStreaming"></param>
-        /// <returns></returns>
-        public BulkInsertOptions EnableStreaming(bool enableStreaming)
-        {
-            EnableStreamingValue = enableStreaming;
-            return this;
-        }
-#endif
-        */
     }
 }
