@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -40,7 +40,7 @@ namespace EntityFramework.BulkInsert.Providers
         }
 
 #if NET45
-        
+
         /// <summary>
         /// Get sql grography object from well known text
         /// </summary>
@@ -75,27 +75,18 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="entities"></param>
         public virtual async Task RunAsync<T>(IEnumerable<T> entities)
         {
-            IDbConnection dbConnection = null;
-
-            if (Options.Connection == null)
+            if (Options.Transaction?.Connection != null)
             {
-                dbConnection = GetConnection();
+                await RunAsync(entities, Options.Transaction);
             }
             else
-                dbConnection = Options.Connection;
-
-            try
             {
-
-                if (dbConnection.State != ConnectionState.Open)
-                    dbConnection.Open();
-
-                if (Options.Connection != null && Options.Transaction != null)
+                IDbConnection dbConnection = GetConnection();
+                try
                 {
-                    await RunAsync(entities, Options.Transaction);
-                }
-                else
-                {
+                    if (dbConnection.State != ConnectionState.Open)
+                        dbConnection.Open();
+
                     using (var transaction = dbConnection.BeginTransaction())
                     {
                         try
@@ -113,12 +104,12 @@ namespace EntityFramework.BulkInsert.Providers
                         }
                     }
                 }
-            }
-            finally
-            {
-                // See if we made the connection and dispose if so
-                if (Options.Connection == null)
-                    dbConnection.Dispose();
+                finally
+                {
+                    // See if we made the connection and dispose if so
+                    if (Options.Connection == null)
+                        dbConnection.Dispose();
+                }
             }
         }
 
@@ -180,27 +171,18 @@ namespace EntityFramework.BulkInsert.Providers
         /// <param name="entities"></param>
         public virtual void Run<T>(IEnumerable<T> entities)
         {
-            IDbConnection dbConnection = null;
-
-            if (Options.Connection == null)
+            if (Options.Transaction?.Connection != null)
             {
-                dbConnection = GetConnection();
+                Run(entities, Options.Transaction);
             }
             else
-                dbConnection = Options.Connection;
-
-            try
             {
-
-                if (dbConnection.State != ConnectionState.Open)
-                    dbConnection.Open();
-
-                if (Options.Connection != null && Options.Transaction != null)
+                IDbConnection dbConnection = GetConnection();
+                try
                 {
-                    Run(entities, Options.Transaction);
-                }
-                else
-                {
+                    if (dbConnection.State != ConnectionState.Open)
+                        dbConnection.Open();
+
                     using (var transaction = dbConnection.BeginTransaction())
                     {
                         try
@@ -217,13 +199,14 @@ namespace EntityFramework.BulkInsert.Providers
                             throw;
                         }
                     }
+
                 }
-            }
-            finally
-            {
-                // See if we made the connection and dispose if so
-                if (Options.Connection == null)
-                    dbConnection.Dispose();
+                finally
+                {
+                    // See if we made the connection and dispose if so
+                    if (Options.Connection == null)
+                        dbConnection.Dispose();
+                }
             }
         }
 
