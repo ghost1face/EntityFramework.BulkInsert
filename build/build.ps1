@@ -13,7 +13,7 @@ properties {
   $toolsDir = "$baseDir\Tools"
   $docDir = "$baseDir\Doc"
   $releaseDir = "$baseDir\Release"
-  $workingDir = "$baseDir\Working"
+  $workingDir = "$baseDir\dist"
   
   $ns = $project
   
@@ -65,7 +65,7 @@ task Build -depends Clean {
 	$assemblyInfoCs = "$sourceDir\$ns\Properties\AssemblyInfo.cs"
 	Write-Host $assemblyInfoCs
 	
-	Update-AssemblyInfoFiles "$sourceDir\$ns"
+	Update-AssemblyInfoFiles "$sourceDir\Common"
   
 	foreach ($build in $builds)
 	{
@@ -76,7 +76,7 @@ task Build -depends Clean {
 		Write-Host -ForegroundColor Green "Building " $name
 		Write-Host -ForegroundColor Green "Signed " $sign
 		Write-Host
-		exec { msbuild "/t:Clean;Rebuild" /p:Configuration=Release /p:DebugSymbols=true "/p:Platform=Any CPU" /p:OutputPath=bin\Release\$finalDir\ /p:AssemblyOriginatorKeyFile=$signKeyPath "/p:SignAssembly=$sign" "/p:TreatWarningsAsErrors=$treatWarningsAsErrors" (GetConstants $build.Constants $sign) ($sourceDir + "\" + $build.Root + $build.Name) | Out-Default } "Error building $name"
+		exec { msbuild "/t:Clean;Rebuild" /p:Configuration=Release /p:DebugSymbols=true "/p:Platform=Any CPU" /p:OutputPath=bin\Release\$finalDir\ /p:AssemblyOriginatorKeyFile=$signKeyPath "/p:SignAssembly=$sign" "/p:TreatWarningsAsErrors=$treatWarningsAsErrors" "/p:Optimize=true" (GetConstants $build.Constants $sign) ($sourceDir + "\" + $build.Root + $build.Name) | Out-Default } "Error building $name"
 	}
 }
 
@@ -148,7 +148,7 @@ function Update-AssemblyInfoFiles ([string] $sourceDir)
     $assemblyVersionPattern = 'AssemblyVersion\("(.+)(\.([0-9]+)){1,3}"\)'
     $fileVersionPattern = 'AssemblyFileVersion\("(.+)(\.([0-9]+)){1,3}"\)'
     
-    Get-ChildItem -Path $sourceDir -r -filter AssemblyInfo.cs | ForEach-Object {
+    Get-ChildItem -Path $sourceDir -r -filter CommonAssemblyInfo.cs | ForEach-Object {
         
         $filename = $_.Directory.ToString() + '\' + $_.Name
         Write-Host $filename

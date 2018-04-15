@@ -24,7 +24,7 @@
     <dependencies>
       <dependency id="EntityFramework" version="6.2.0" />
       <dependency id="EntityFramework.MappingAPI" version="6.1.0.9" />
-      <dependency id="EntityFramework.BulkInsert" version="6.1.0.9" />
+      <dependency id="EntityFramework.BulkInsert" version="6.0.3.6" />
       <dependency id="MySql.Data" version="6.9.11" />
       <dependency id="MySql.Data.Entity" version="6.9.11" />
     </dependencies>
