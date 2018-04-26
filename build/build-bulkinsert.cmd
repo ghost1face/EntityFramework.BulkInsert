@@ -1,1 +1,1 @@
-build -f '4.5'
+build -f '4.5' -parameters @{'project'='EntityFramework.BulkInsert'}

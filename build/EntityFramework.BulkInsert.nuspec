@@ -22,8 +22,8 @@
     <copyright>Copyright  2018</copyright>
     <tags>data ef ef6 code-first batch bulk insert</tags>
     <dependencies>
-      <dependency id="EntityFramework" version="6.2.0" />
-      <dependency id="EntityFramework.MappingAPI" version="6.1.0.9" />
+      <dependency id="EntityFramework" version="6.1.0" />
+      <dependency id="EntityFramework.MappingAPI" version="[6.1.0.9]" />
     </dependencies>
   </metadata>
 </package>
