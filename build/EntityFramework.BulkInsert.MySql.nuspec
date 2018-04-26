@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>EntityFramework.BulkInsert.MySql</id>
+    <id>EntityFramework.BulkInsert.MySql-EF6</id>
     <version>$version$</version>
-    <title>EntityFramework.BulkInsert.MySql</title>
+    <title>EntityFramework.BulkInsert.MySql-EF6</title>
     <authors>Daniel Destouche</authors>
     <owners>Daniel Destouche</owners>
     <description>
@@ -22,9 +22,9 @@
     <copyright>Copyright  2018</copyright>
     <tags>data ef ef6 code-first batch bulk insert mysql</tags>
     <dependencies>
-      <dependency id="EntityFramework" version="6.2.0" />
-      <dependency id="EntityFramework.MappingAPI" version="6.1.0.9" />
-      <dependency id="EntityFramework.BulkInsert" version="6.1.0.9" />
+      <dependency id="EntityFramework" version="6.1.0" />
+      <dependency id="EntityFramework.MappingAPI" version="[6.1.0.9]" />
+      <dependency id="EntityFramework.BulkInsert" version="6.0.3.5" />
       <dependency id="MySql.Data" version="6.9.11" />
       <dependency id="MySql.Data.Entity" version="6.9.11" />
     </dependencies>

@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>EntityFramework.BulkInsert-EF6</id>
+    <id>EntityFramework.BulkInsert.SqlServerCe-EF6</id>
     <version>$version$</version>
-    <title>EntityFramework.BulkInsert-EF6</title>
+    <title>EntityFramework.BulkInsert.SqlServerCe-EF6</title>
     <authors>Daniel Destouche</authors>
     <owners>Daniel Destouche</owners>
     <description>
-      Fast Bulk insert extension for EntityFramework 6
+      Fast Bulk insert extension for SqlServerCe using EntityFramework 6
     </description>
     <releaseNotes>
     </releaseNotes>
     <summary>
-      Fast Bulk insert extension for EntityFramework 6
+      Fast Bulk insert extension for SqlServerCe using EntityFramework 6
     </summary>
     <language>en-US</language>
     <projectUrl>https://github.com/ghost1face/EntityFramework.BulkInsert</projectUrl>
@@ -24,6 +24,7 @@
     <dependencies>
       <dependency id="EntityFramework" version="6.1.0" />
       <dependency id="EntityFramework.MappingAPI" version="[6.1.0.9]" />
+      <dependency id="EntityFramework.BulkInsert" version="6.0.3.5" />
     </dependencies>
   </metadata>
 </package>

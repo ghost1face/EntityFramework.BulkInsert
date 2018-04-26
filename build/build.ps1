@@ -8,31 +8,68 @@ properties {
   $treatWarningsAsErrors = $false
   
   $baseDir  = resolve-path ..
-  $buildDir = "$baseDir\Build"
-  $sourceDir = "$baseDir\Src"
-  $toolsDir = "$baseDir\Tools"
-  $docDir = "$baseDir\Doc"
-  $releaseDir = "$baseDir\Release"
-  $workingDir = "$baseDir\Working"
+  $buildDir = "$baseDir\build"
+  $sourceDir = "$baseDir\src"
+  $toolsDir = "$baseDir\tools"
+  $docDir = "$baseDir\doc"
+  $releaseDir = "$baseDir\release"
+  $workingDir = "$baseDir\dist"
   
   $ns = $project
+  $builds = @()
   
   if (!$ns) {
-	  $ns = "EntityFramework.BulkInsert"
+	$builds = @(
+		@{
+			Root = "EntityFramework.BulkInsert\"; 
+			Name = "EntityFramework.BulkInsert.csproj"; 
+			TestsName = "EntityFramework.BulkInsert.Test"; 
+			Constants="NET45;EF6"; 
+			FinalDir="Net45"; 
+			NuGetDir = "net45"; 
+			Framework="net-4.5"; 
+			NS="EntityFramework.BulkInsert";
+			Sign=$true
+		},
+		@{
+			Root = "EntityFramework.BulkInsert.SqlServerCe\"; 
+			Name = "EntityFramework.BulkInsert.SqlServerCe.csproj"; 
+			TestsName = "EntityFramework.BulkInsert.Test"; 
+			Constants="NET45;EF6"; 
+			FinalDir="Net45"; 
+			NuGetDir = "net45"; 
+			Framework="net-4.5"; 
+			NS="EntityFramework.BulkInsert.SqlServerCe";
+			Sign=$true
+		},
+		@{
+			Root = "EntityFramework.BulkInsert.MySql\"; 
+			Name = "EntityFramework.BulkInsert.MySql.csproj"; 
+			TestsName = "EntityFramework.BulkInsert.Test"; 
+			Constants="NET45;EF6"; 
+			FinalDir="Net45"; 
+			NuGetDir = "net45"; 
+			Framework="net-4.5"; 
+			NS="EntityFramework.BulkInsert.MySql";
+			Sign=$true
+		}
+	)
   }
-  
-  $builds = @(
-    @{
-		Root = "$ns\"; 
-		Name = "$ns.csproj"; 
-		TestsName = "EntityFramework.BulkInsert.Test"; 
-		Constants="NET45;EF6"; 
-		FinalDir="Net45"; 
-		NuGetDir = "net45"; 
-		Framework="net-4.5"; 
-		Sign=$true
-	}
-  )
+  else {
+	$builds = @(
+		@{
+			Root = "$ns\"; 
+			Name = "$ns.csproj"; 
+			TestsName = "EntityFramework.BulkInsert.Test"; 
+			Constants="NET45;EF6"; 
+			FinalDir="Net45"; 
+			NuGetDir = "net45"; 
+			Framework="net-4.5"; 
+			NS="$ns";
+			Sign=$true;
+		}
+	)
+  }  
 }
 
 
@@ -40,7 +77,11 @@ task default -depends Test
 
 # Validate properties
 task Validate {
-	Assert ("EntityFramework.BulkInsert", "EntityFramework.BulkInsert.MySql", "EntityFramework.BulkInsert.SqlServerCe" -contains $ns) "Please provide a valid project parameter"
+
+	foreach ($build in $builds)
+	{
+		Assert ("EntityFramework.BulkInsert", "EntityFramework.BulkInsert.MySql", "EntityFramework.BulkInsert.SqlServerCe" -contains $build.NS) "Please provide a valid project parameter"
+	}
 }
 
 # Ensure a clean working directory
@@ -62,10 +103,10 @@ task Build -depends Clean {
 		
 	Write-Host -ForegroundColor Green "Updating assembly version"
 	
-	$assemblyInfoCs = "$sourceDir\$ns\Properties\AssemblyInfo.cs"
-	Write-Host $assemblyInfoCs
+	#$assemblyInfoCs = "$sourceDir\$ns\Properties\AssemblyInfo.cs"
+	#Write-Host $assemblyInfoCs
 	
-	Update-AssemblyInfoFiles "$sourceDir\$ns"
+	Update-AssemblyInfoFiles "$sourceDir\Common"
   
 	foreach ($build in $builds)
 	{
@@ -76,29 +117,32 @@ task Build -depends Clean {
 		Write-Host -ForegroundColor Green "Building " $name
 		Write-Host -ForegroundColor Green "Signed " $sign
 		Write-Host
-		exec { msbuild "/t:Clean;Rebuild" /p:Configuration=Release /p:DebugSymbols=true "/p:Platform=Any CPU" /p:OutputPath=bin\Release\$finalDir\ /p:AssemblyOriginatorKeyFile=$signKeyPath "/p:SignAssembly=$sign" "/p:TreatWarningsAsErrors=$treatWarningsAsErrors" (GetConstants $build.Constants $sign) ($sourceDir + "\" + $build.Root + $build.Name) | Out-Default } "Error building $name"
+		exec { msbuild "/t:Clean;Rebuild" /p:Configuration=Release /p:DebugSymbols=true "/p:Platform=Any CPU" /p:OutputPath=bin\Release\$finalDir\ /p:AssemblyOriginatorKeyFile=$signKeyPath "/p:SignAssembly=$sign" "/p:TreatWarningsAsErrors=$treatWarningsAsErrors" "/p:Optimize=true" (GetConstants $build.Constants $sign) ($sourceDir + "\" + $build.Root + $build.Name) | Out-Default } "Error building $name"
 	}
 }
 
 # Optional build documentation, add files to final zip
 task Package -depends Build {
   
-  foreach ($build in $builds)
-  {
-    $name = $build.TestsName
-	$root = $build.Root
-    $finalDir = $build.FinalDir
+  #foreach ($build in $builds)
+  #{
+  #  $name = $build.TestsName
+#	$root = $build.Root
+ #   $finalDir = $build.FinalDir
     
-	robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\Package\Bin\$finalDir "$ns.*" /NP /XO /XF *.pri | Out-Default
-  }
+#	robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\Package\Bin\$build.NS\$finalDir "$build.NS.*" /NP /XO /XF *.pri | Out-Default
+#  }
   
   if ($buildNuGet)
   {
     New-Item -Path $workingDir\NuGet -ItemType Directory
-    Copy-Item -Path "$buildDir\$ns.nuspec" -Destination $workingDir\NuGet\$ns.nuspec -recurse
-    
+	    
     foreach ($build in $builds)
     {
+	  $buildNS = $build.NS
+	  New-Item -Path $workingDir\NuGet\$buildNS -ItemType Directory
+	  Copy-Item -Path "$buildDir\$buildNS.nuspec" -Destination $workingDir\NuGet\$buildNS\$buildNS.nuspec -recurse
+		
       if ($build.NuGetDir -ne $null)
       {
         $name = $build.TestsName
@@ -108,15 +152,21 @@ task Package -depends Build {
         
         foreach ($frameworkDir in $frameworkDirs)
         {
-          robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\NuGet\lib\$frameworkDir "$ns.*" /NP /XO /XF *.pri | Out-Default
+          robocopy "$sourceDir\$root\bin\Release\$finalDir" $workingDir\NuGet\$buildNS\lib\$frameworkDir "$buildNS.*" /NP /XO /XF *.pri | Out-Default
         }
       }
+	  
+	  $currentVersion = GetVersion $workingDir\NuGet\$buildNS\lib\net45\$buildNS.dll
+	  
+	  exec { .\Tools\NuGet\NuGet.exe pack $workingDir\NuGet\$buildNS\$buildNS.nuspec -Symbols -version $currentVersion }
+	  move -Path .\*.nupkg -Destination $workingDir\NuGet\$buildNS
+	  
     }
   
-	$currentVersion = GetVersion $workingDir\NuGet\lib\net45\$ns.dll
+	#$currentVersion = GetVersion $workingDir\NuGet\lib\net45\$ns.dll
   
-    exec { .\Tools\NuGet\NuGet.exe pack $workingDir\NuGet\$ns.nuspec -Symbols -version $currentVersion }
-    move -Path .\*.nupkg -Destination $workingDir\NuGet
+    #exec { .\Tools\NuGet\NuGet.exe pack $workingDir\NuGet\$ns.nuspec -Symbols -version $currentVersion }
+    #move -Path .\*.nupkg -Destination $workingDir\NuGet
   }
 }
 
@@ -148,7 +198,7 @@ function Update-AssemblyInfoFiles ([string] $sourceDir)
     $assemblyVersionPattern = 'AssemblyVersion\("(.+)(\.([0-9]+)){1,3}"\)'
     $fileVersionPattern = 'AssemblyFileVersion\("(.+)(\.([0-9]+)){1,3}"\)'
     
-    Get-ChildItem -Path $sourceDir -r -filter AssemblyInfo.cs | ForEach-Object {
+    Get-ChildItem -Path $sourceDir -r -filter CommonAssemblyInfo.cs | ForEach-Object {
         
         $filename = $_.Directory.ToString() + '\' + $_.Name
         Write-Host $filename

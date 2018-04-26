@@ -115,6 +115,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="BulkCopyOptions.cs" />
     <Compile Include="Exceptions\BulkInsertProviderNotFoundException.cs" />
     <Compile Include="Exceptions\EntityTypeNotFoundException.cs" />
