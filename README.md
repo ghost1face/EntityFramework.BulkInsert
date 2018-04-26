@@ -1,6 +1,14 @@
 # EntityFramework.BulkInsert
 Updated port of EntityFramework.BulkInsert from the original version on the Codeplex site. This is not my original project, this is to keep it going and add minor updates and support.  The original was hosted on Codeplex but later taken down.  Since then the project has seen support for async IO, bug fixes, explicit transaction support and support for MySql.
 
+# NuGet
+There are several NuGet packages available:
+* [EntityFramework6.BulkInsert](https://www.nuget.org/packages/EntityFramework6.BulkInsert/)
+
+* [EntityFramework6.BulkInsert.SqlServerCe](https://www.nuget.org/packages/EntityFramework6.BulkInsert.SqlServerCe/)
+
+* [EntityFramework6.BulkInsert.MySql](https://www.nuget.org/packages/EntityFramework6.BulkInsert.MySql/)
+
 # Purpose
 The purpose of this library is for performing Bulk Inserts using EntityFramework 6 and your existing `DbContext` instance to perform faster inserts instead of generating multiple insert statements for a collection of strongly typed objects.
 
