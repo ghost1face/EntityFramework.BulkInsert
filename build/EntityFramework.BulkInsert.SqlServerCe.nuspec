@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EntityFramework.BulkInsert.SqlServerCe</id>
+    <version>$version$</version>
+    <title>EntityFramework.BulkInsert.SqlServerCe</title>
+    <authors>Daniel Destouche</authors>
+    <owners>Daniel Destouche</owners>
+    <description>
+      Fast Bulk insert extension for SqlServerCe using EntityFramework 6
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      Fast Bulk insert extension for SqlServerCe using EntityFramework 6
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/ghost1face/EntityFramework.BulkInsert</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
+    <copyright>Copyright  2018</copyright>
+    <tags>data ef ef6 code-first batch bulk insert</tags>
+    <dependencies>
+      <dependency id="EntityFramework" version="6.1.0" />
+      <dependency id="EntityFramework.MappingAPI" version="[6.1.0.9]" />
+      <dependency id="EntityFramework.BulkInsert" version="6.0.3.5" />
+    </dependencies>
+  </metadata>
+</package>
