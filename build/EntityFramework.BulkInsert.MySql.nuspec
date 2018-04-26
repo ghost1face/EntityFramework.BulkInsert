@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>EntityFramework.BulkInsert.MySql</id>
+    <id>EntityFramework.BulkInsert.MySql-EF6</id>
     <version>$version$</version>
-    <title>EntityFramework.BulkInsert.MySql</title>
+    <title>EntityFramework.BulkInsert.MySql-EF6</title>
     <authors>Daniel Destouche</authors>
     <owners>Daniel Destouche</owners>
     <description>

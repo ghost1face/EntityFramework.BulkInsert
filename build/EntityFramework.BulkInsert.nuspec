@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>EntityFramework.BulkInsert</id>
+    <id>EntityFramework.BulkInsert-EF6</id>
     <version>$version$</version>
-    <title>EntityFramework.BulkInsert</title>
-    <authors>Daniel Destouche;Markko Legonkov</authors>
-    <owners>Daniel Destouche;Markko Legonkov</owners>
+    <title>EntityFramework.BulkInsert-EF6</title>
+    <authors>Daniel Destouche</authors>
+    <owners>Daniel Destouche</owners>
     <description>
       Fast Bulk insert extension for EntityFramework 6
     </description>

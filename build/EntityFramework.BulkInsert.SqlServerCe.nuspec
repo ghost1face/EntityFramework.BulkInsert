@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>EntityFramework.BulkInsert.SqlServerCe</id>
+    <id>EntityFramework.BulkInsert.SqlServerCe-EF6</id>
     <version>$version$</version>
-    <title>EntityFramework.BulkInsert.SqlServerCe</title>
+    <title>EntityFramework.BulkInsert.SqlServerCe-EF6</title>
     <authors>Daniel Destouche</authors>
     <owners>Daniel Destouche</owners>
     <description>
