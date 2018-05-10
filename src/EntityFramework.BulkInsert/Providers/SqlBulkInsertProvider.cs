@@ -7,6 +7,9 @@ using EntityFramework.BulkInsert.Helpers;
 #if EF6
 using Microsoft.SqlServer.Types;
 #endif
+#if EF5
+using System.Data.Spatial;
+#endif
 using System.Threading.Tasks;
 #endif
 
@@ -73,8 +76,13 @@ namespace EntityFramework.BulkInsert.Providers
         /// <returns></returns>
         public override object GetSqlGeography(string wkt, int srid)
         {
+#if EF6
             var chars = new SqlChars(wkt);
             return SqlGeography.STGeomFromText(chars, srid);
+#endif
+#if EF5
+            return DbGeography.FromText(wkt, srid);
+#endif
         }
 
         /// <summary>
@@ -85,8 +93,13 @@ namespace EntityFramework.BulkInsert.Providers
         /// <returns></returns>
         public override object GetSqlGeometry(string wkt, int srid)
         {
+#if EF6
             var chars = new SqlChars(wkt);
             return SqlGeometry.STGeomFromText(chars, srid);
+#endif
+#if EF5
+            return DbGeometry.FromText(wkt, srid);
+#endif
         }
 
         /// <summary>

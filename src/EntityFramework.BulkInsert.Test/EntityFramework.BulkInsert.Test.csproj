@@ -51,43 +51,8 @@
   </PropertyGroup>
   <Choose>
     <When Condition=" '$(Configuration)'=='Debug' " />
-    <When Condition=" '$(Configuration)'=='NET45_EF5' ">
-      <ItemGroup>
-        <Reference Include="EntityFramework">
-          <SpecificVersion>False</SpecificVersion>
-          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
-        </Reference>
-        <Reference Include="EntityFramework.SqlServer">
-          <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-        </Reference>
-        <Reference Include="EntityFramework.MappingAPI">
-          <HintPath>..\packages\EntityFramework.MappingAPI.5.0.0.6\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
-        <Reference Include="EntityFramework.SqlServerCompact">
-          <HintPath>..\packages\EntityFramework.SqlServerCompact.4.1.8482.1\lib\System.Data.SqlServerCe.Entity.dll</HintPath>
-        </Reference>
-        <Reference Include="System.Data.Entity" />
-      </ItemGroup>
-    </When>
-    <When Condition=" '$(Configuration)'=='NET45_EF6' ">
-      <ItemGroup>
-        <Reference Include="EntityFramework">
-          <SpecificVersion>False</SpecificVersion>
-          <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
-        </Reference>
-        <Reference Include="EntityFramework.SqlServer">
-          <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-        </Reference>
-        <Reference Include="EntityFramework.MappingAPI">
-          <HintPath>..\packages\EntityFramework.MappingAPI.6.0.0.7\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
-        <Reference Include="EntityFramework.SqlServerCompact">
-          <HintPath>..\packages\EntityFramework.SqlServerCompact.6.1.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
+    <When Condition=" '$(Configuration)'=='NET45_EF5' " />
+    <When Condition=" '$(Configuration)'=='NET45_EF6' " />
   </Choose>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -102,9 +67,6 @@
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
-    <Reference Include="ErikEJ.SqlCe40">
-      <HintPath>..\packages\ErikEJ.SqlCeBulkCopy.2.1.6.4\lib\net40\ErikEJ.SqlCe40.dll</HintPath>
-    </Reference>
     <Reference Include="MySql.Data, Version=6.9.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.11\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
@@ -113,9 +75,6 @@
     </Reference>
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Salient.Data">
-      <HintPath>..\packages\ErikEJ.SqlCeBulkCopy.2.1.6.4\lib\net40\Salient.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
@@ -224,7 +183,9 @@
     <Compile Include="CodeFirst\Domain\TestUser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <EntityDeploy Include="DatabaseFirst\TestDataModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>TestDataModel.Designer.cs</LastGenOutput>
