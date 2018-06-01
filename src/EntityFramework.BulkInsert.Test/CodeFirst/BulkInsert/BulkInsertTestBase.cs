@@ -316,9 +316,6 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
                 var createdUser = users[0];
                 var userInDb = ctx.Users.OrderByDescending(x => x.CreatedAt).First();
 
-                //var serializer = new XmlSerializer(typeof (TestUser));
-                //serializer.Serialize(Console.Out, userInDb);
-
                 Assert.AreEqual(createdUser.FirstName, userInDb.FirstName);
                 Assert.AreEqual(createdUser.LastName, userInDb.LastName);
                 Assert.AreEqual(createdUser.Contact.PhoneNumber, userInDb.Contact.PhoneNumber);

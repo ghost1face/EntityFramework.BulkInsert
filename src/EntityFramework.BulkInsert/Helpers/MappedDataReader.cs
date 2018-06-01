@@ -22,8 +22,8 @@ namespace EntityFramework.BulkInsert.Helpers
 {
     public class MappedDataReader<T> : IDataReader
     {
-        private readonly IEnumerator<T> _enumerator;
-        private Dictionary<int, Func<T, object>> _currentEntityTypeSelectors;
+        private readonly IEnumerator<T> enumerator;
+        private Dictionary<int, Func<T, object>> currentEntityTypeSelectors;
 
         public Dictionary<Type, Dictionary<int, Func<T, object>>> Selectors { get; private set; }
 
@@ -96,7 +96,7 @@ namespace EntityFramework.BulkInsert.Helpers
             Cols = new Dictionary<int, IPropertyMap>();
             Selectors = new Dictionary<Type, Dictionary<int, Func<T, object>>>();
 
-            _enumerator = enumerable.GetEnumerator();
+            enumerator = enumerable.GetEnumerator();
 
             int i = 0;
             foreach (var kvp in tableMappings)
@@ -155,18 +155,18 @@ namespace EntityFramework.BulkInsert.Helpers
         public void Dispose()
         {
             Selectors = null;
-            _enumerator.Dispose();
+            enumerator.Dispose();
         }
 
         public bool Read()
         {
-            var read = _enumerator.MoveNext();
+            var read = enumerator.MoveNext();
             if (read)
             {
-                var t = _enumerator.Current.GetType();
+                var t = enumerator.Current.GetType();
                 try
                 {
-                    _currentEntityTypeSelectors = Selectors[t];
+                    currentEntityTypeSelectors = Selectors[t];
                 }
                 catch (KeyNotFoundException)
                 {
@@ -178,7 +178,7 @@ namespace EntityFramework.BulkInsert.Helpers
 
         public object GetValue(int i)
         {
-            if (_enumerator.Current == null)
+            if (enumerator.Current == null)
             {
                 return null;
             }
@@ -188,7 +188,7 @@ namespace EntityFramework.BulkInsert.Helpers
                 object value;
                 try
                 {
-                    value = _currentEntityTypeSelectors[i](_enumerator.Current);
+                    value = currentEntityTypeSelectors[i](enumerator.Current);
 #if NET45
                     if (value is DbGeography dbgeo)
                     {
@@ -221,7 +221,7 @@ namespace EntityFramework.BulkInsert.Helpers
                             return 0;
 
                         navSelectors = new Dictionary<int, Func<T, object>>();
-                        var x = Expression.Parameter(_enumerator.Current.GetType(), "x");
+                        var x = Expression.Parameter(enumerator.Current.GetType(), "x");
 
                         var propNames = $"{col.PropertyName}.{pk.PropertyName}".Split('.');
                         Expression propertyExpression = Expression.PropertyOrField(x, propNames[0]);
@@ -235,8 +235,8 @@ namespace EntityFramework.BulkInsert.Helpers
                         Selectors[navigationType] = navSelectors;
                     }
 
-                    return navSelectors[i](_enumerator.Current);
-                    
+                    return navSelectors[i](enumerator.Current);
+
                 }
 
                 return value;
