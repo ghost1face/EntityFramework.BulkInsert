@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using EntityFramework.BulkInsert.Helpers;
 
 #if NET45
 #if EF6
-using Microsoft.SqlServer.Types;
+using System.Data.Entity.Spatial;
 #endif
 #if EF5
 using System.Data.Spatial;
@@ -77,8 +76,13 @@ namespace EntityFramework.BulkInsert.Providers
         public override object GetSqlGeography(string wkt, int srid)
         {
 #if EF6
-            var chars = new SqlChars(wkt);
-            return SqlGeography.STGeomFromText(chars, srid);
+            var geo = new DbGeographyWellKnownValue
+            {
+                WellKnownText = wkt,
+                CoordinateSystemId = srid
+            };
+
+            return DbSpatialServices.Default.CreateProviderValue(geo);
 #endif
 #if EF5
             return DbGeography.FromText(wkt, srid);
@@ -93,9 +97,14 @@ namespace EntityFramework.BulkInsert.Providers
         /// <returns></returns>
         public override object GetSqlGeometry(string wkt, int srid)
         {
-#if EF6
-            var chars = new SqlChars(wkt);
-            return SqlGeometry.STGeomFromText(chars, srid);
+#if EF6          
+            var geo = new DbGeometryWellKnownValue
+            {
+                WellKnownText = wkt,
+                CoordinateSystemId = srid
+            };
+
+            return DbSpatialServices.Default.CreateProviderValue(geo);
 #endif
 #if EF5
             return DbGeometry.FromText(wkt, srid);

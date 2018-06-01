@@ -10,7 +10,7 @@ namespace EntityFramework.BulkInsert
     {
         private static Dictionary<string, Func<IEfBulkInsertProvider>> _providers;
 
-        private static readonly object ProviderInitializerLockObject = new object();
+        private static readonly object providerInitializerLockObject = new object();
 
         /// <summary>
         /// Registered bulkinsert providers container
@@ -19,7 +19,7 @@ namespace EntityFramework.BulkInsert
         {
             get
             {
-                lock (ProviderInitializerLockObject)
+                lock (providerInitializerLockObject)
                 {
                     if (_providers == null)
                     {
@@ -27,7 +27,6 @@ namespace EntityFramework.BulkInsert
 
                         // bundled providers
                         Register<SqlBulkInsertProvider>();
-                        //Register<EfSqlCeBulkiInsertProvider>("System.Data.SqlServerCe.4.0");
                     }
                 }
 
