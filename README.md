@@ -3,11 +3,11 @@ Updated port of EntityFramework.BulkInsert from the original version on the Code
 
 # NuGet
 There are several NuGet packages available:
-* [EntityFramework6.BulkInsert](https://www.nuget.org/packages/EntityFramework6.BulkInsert/)
+* EntityFramework6.BulkInsert [![NuGet](https://img.shields.io/nuget/v/EntityFramework6.BulkInsert.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/EntityFramework6.BulkInsert/)
 
-* [EntityFramework6.BulkInsert.SqlServerCe](https://www.nuget.org/packages/EntityFramework6.BulkInsert.SqlServerCe/)
+* EntityFramework6.BulkInsert.SqlServerCe [![NuGet](https://img.shields.io/nuget/v/EntityFramework6.BulkInsert.SqlServerCe.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/EntityFramework6.BulkInsert.SqlServerCe/)
 
-* [EntityFramework6.BulkInsert.MySql](https://www.nuget.org/packages/EntityFramework6.BulkInsert.MySql/)
+* EntityFramework6.BulkInsert.MySql [![NuGet](https://img.shields.io/nuget/v/EntityFramework6.BulkInsert.MySql.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/EntityFramework6.BulkInsert.MySql/)
 
 # Purpose
 The purpose of this library is for performing Bulk Inserts using EntityFramework 6 and your existing `DbContext` instance to perform faster inserts instead of generating multiple insert statements for a collection of strongly typed objects.
