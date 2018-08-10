@@ -1,3 +1,4 @@
+using EntityFramework.BulkInsert.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,7 +32,7 @@ namespace EntityFramework.BulkInsert.Providers
         {
             get
             {
-                return DbConnection.ConnectionString;
+                return Context.GetOriginalConnectionString();
             }
         }
 

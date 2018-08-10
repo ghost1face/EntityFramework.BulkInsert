@@ -329,6 +329,32 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert
             }
         }
 
+        [Test]
+        public void PersistSecurityInfoFalse()
+        {
+            Assert.DoesNotThrow(() =>
+            {
+                using (var ctx = GetContext())
+                {
+                    const int itemsCount = 1;
+                    var users = CreateUsers(itemsCount).ToArray();
+
+                    var firstUser = ctx.Users.FirstOrDefault();
+                    firstUser.FirstName = "Test";
+                    ctx.SaveChanges();
+
+                    BulkInsertOptions bulkOptions = new BulkInsertOptions
+                    {
+                        BulkCopyOptions = BulkCopyOptions.FireTriggers | BulkCopyOptions.CheckConstraints
+                    };
+
+                    ctx.BulkInsert(users, bulkOptions);
+
+                    ctx.SaveChanges();
+                }
+            });
+        }
+
 #if NET45
         [Test]
         public virtual void DbGeographyObject()

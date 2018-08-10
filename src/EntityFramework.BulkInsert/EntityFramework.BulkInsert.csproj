@@ -92,6 +92,7 @@
     <Compile Include="BulkInsertDefaults.cs" />
     <Compile Include="Extensions\BulkInsertExtension.cs" />
     <Compile Include="BulkInsertOptions.cs" />
+    <Compile Include="Extensions\DbContextExtensions.cs" />
     <Compile Include="Helpers\MappedDataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
