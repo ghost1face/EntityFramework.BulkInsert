@@ -8,29 +8,41 @@ namespace EntityFramework.BulkInsert.Extensions
 {
     public static class DbContextExtensions
     {
+        private static Delegate originalConnectionStringDelegate;
+        private static readonly object syncLock;
+
+        static DbContextExtensions()
+        {
+            syncLock = new object();
+        }
+
         public static string GetOriginalConnectionString(this DbContext dbContext)
         {
             object internalContext = dbContext.GetFieldValue<DbContext, object>("_internalContext");
 
-            Type internalType = internalContext.GetType();
-            Type lambdaType = typeof(Func<,>).MakeGenericType(internalType, typeof(string));
-            ParameterExpression param = Expression.Parameter(internalType, "arg");
-            MemberExpression member = Expression.PropertyOrField(param, "OriginalConnectionString");
-            LambdaExpression lambda = Expression.Lambda(lambdaType, member, param);
+            if (originalConnectionStringDelegate == null)
+                InitOriginalConnectionStringDelegate(internalContext.GetType());
 
-            return (string)lambda.Compile().DynamicInvoke(internalContext);
+            return (string)originalConnectionStringDelegate.DynamicInvoke(internalContext);
         }
 
-        private static Type GetBaseType(object obj)
+        private static void InitOriginalConnectionStringDelegate(Type internalContextType)
         {
-            Type type = obj.GetType();
-
-            while (type.BaseType != typeof(object))
+            if (originalConnectionStringDelegate == null)
             {
-                type = type.BaseType;
-            }
+                lock (syncLock)
+                {
+                    if (originalConnectionStringDelegate == null)
+                    {
+                        Type lambdaType = typeof(Func<,>).MakeGenericType(internalContextType, typeof(string));
+                        ParameterExpression param = Expression.Parameter(internalContextType, "arg");
+                        MemberExpression member = Expression.PropertyOrField(param, "OriginalConnectionString");
+                        LambdaExpression lambda = Expression.Lambda(lambdaType, member, param);
 
-            return type;
+                        originalConnectionStringDelegate = lambda.Compile();
+                    }
+                }
+            }
         }
     }
 }
