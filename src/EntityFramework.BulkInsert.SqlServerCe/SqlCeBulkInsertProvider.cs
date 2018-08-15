@@ -19,11 +19,6 @@ namespace EntityFramework.BulkInsert.SqlServerCe
             return new SqlCeConnection(ConnectionString);
         }
 
-        protected override string ConnectionString
-        {
-            get { return DbConnection.ConnectionString; }
-        }
-
 #if NET45
 
         /// <summary>

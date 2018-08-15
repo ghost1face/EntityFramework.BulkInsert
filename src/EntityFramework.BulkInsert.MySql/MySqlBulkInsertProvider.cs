@@ -47,8 +47,6 @@ namespace EntityFramework.BulkInsert.MySql
             return new MySqlConnection(ConnectionString);
         }
 
-        protected override string ConnectionString => DbConnection.ConnectionString;
-
         private bool IsValidIdentityType(Type t)
         {
             switch (Type.GetTypeCode(t))

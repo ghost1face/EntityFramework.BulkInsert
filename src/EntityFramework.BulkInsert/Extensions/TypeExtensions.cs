@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace EntityFramework.BulkInsert.Extensions
 {
     internal static class TypeExtensions
     {
+        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, object>> typeFieldAccessorLookup;
+
+        static TypeExtensions()
+        {
+            typeFieldAccessorLookup = new ConcurrentDictionary<Type, ConcurrentDictionary<string, object>>();
+        }
+
         /// <summary>
         /// Returns a private Property Value from a given Object. Uses Reflection.
         /// Throws a ArgumentOutOfRangeException if the Property is not found.
@@ -36,6 +45,73 @@ namespace EntityFramework.BulkInsert.Extensions
                 return fieldInfo.GetValue(obj);
 
             return propertyInfo.GetValue(obj, null);
+        }
+
+        public static TReturn GetFieldValue<T, TReturn>(this T obj, string fieldName)
+        {
+            var accessor = GetFieldAccessor<T, TReturn>(fieldName);
+
+            return accessor(obj);
+        }
+
+        public static TReturn GetFieldValue<TReturn>(this object obj, string fieldName, bool useBaseType)
+        {
+            var accessor = GetFieldAccessor<TReturn>(obj, fieldName, useBaseType);
+
+            return accessor(obj);
+        }
+
+        private static Func<T, TReturn> GetFieldAccessor<T, TReturn>(string fieldName)
+        {
+            Type type = typeof(T);
+
+            if (typeFieldAccessorLookup.TryGetValue(type, out ConcurrentDictionary<string, object> fieldAccessorLookup)
+                && fieldAccessorLookup.TryGetValue(fieldName, out object func))
+                return (Func<T, TReturn>)func;
+
+            // add to dictionary
+            fieldAccessorLookup = new ConcurrentDictionary<string, object>();
+            typeFieldAccessorLookup.TryAdd(type, fieldAccessorLookup);
+
+            ParameterExpression param = Expression.Parameter(type, "arg");
+            MemberExpression member = Expression.PropertyOrField(param, fieldName);
+            LambdaExpression lambda = Expression.Lambda(typeof(Func<T, TReturn>), member, param);
+
+            Func<T, TReturn> compiled = (Func<T, TReturn>)lambda.Compile();
+
+            fieldAccessorLookup.TryUpdate(fieldName, compiled, compiled);
+
+            return compiled;
+        }
+
+        private static Func<object, TReturn> GetFieldAccessor<TReturn>(object obj, string fieldName, bool useBaseType)
+        {
+            Type type = obj.GetType();
+
+            while (useBaseType && type.BaseType != typeof(object))
+            {
+                type = type.BaseType;
+            }
+
+            Type lambdaType = typeof(Func<,>).MakeGenericType(type, typeof(TReturn));
+
+            if (typeFieldAccessorLookup.TryGetValue(type, out ConcurrentDictionary<string, object> fieldAccessorLookup)
+                && fieldAccessorLookup.TryGetValue(fieldName, out object func))
+                return (Func<object, TReturn>)func;
+
+            // add to dictionary
+            fieldAccessorLookup = new ConcurrentDictionary<string, object>();
+            typeFieldAccessorLookup.TryAdd(type, fieldAccessorLookup);
+
+            ParameterExpression param = Expression.Parameter(type, "arg");
+            MemberExpression member = Expression.PropertyOrField(param, fieldName);
+            LambdaExpression lambda = Expression.Lambda(lambdaType, member, param);
+            
+            Func<object, TReturn> compiled = (Func<object, TReturn>)lambda.Compile();
+
+            fieldAccessorLookup.TryUpdate(fieldName, compiled, compiled);
+
+            return compiled;
         }
 
         /// <summary>
