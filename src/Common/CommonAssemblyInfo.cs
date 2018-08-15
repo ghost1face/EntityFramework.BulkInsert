@@ -14,14 +14,14 @@
 // [assembly: AssemblyVersion("1.0.*")]
 
 #if EF4
-[assembly: AssemblyVersion("4.1.0.21")]
-[assembly: AssemblyFileVersion("4.1.0.21")]
+[assembly: AssemblyVersion("4.1.0.22")]
+[assembly: AssemblyFileVersion("4.1.0.22")]
 #endif
 #if EF5
-[assembly: AssemblyVersion("5.0.0.21")]
-[assembly: AssemblyFileVersion("5.0.0.21")]
+[assembly: AssemblyVersion("5.0.0.22")]
+[assembly: AssemblyFileVersion("5.0.0.22")]
 #endif
 #if EF6
-[assembly: AssemblyVersion("6.0.3.7")]
-[assembly: AssemblyFileVersion("6.0.3.7")]
+[assembly: AssemblyVersion("6.0.3.8")]
+[assembly: AssemblyFileVersion("6.0.3.8")]
 #endif
