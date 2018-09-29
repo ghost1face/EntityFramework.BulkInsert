@@ -1,0 +1,59 @@
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+[*]
+insert_final_newline = false
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+
+[{app.config,App.config}]
+indent_style = space
+indent_size = 2
+
+[*.cs]
+# new line preferences
+csharp_new_line_before_catch = true
+csharp_new_line_before_else = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_before_members_in_object_initializers = true
+
+# prefer variable inlining
+csharp_style_inlined_variable_declaration = true:suggestion
+
+# use var when type is apparent
+csharp_style_var_when_type_is_apparent = true:suggestion
+
+# expression-level preferences
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_coalesce_expression = true:suggestion
+
+# code style defaults
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = false
+
+# space preferences
+csharp_space_after_cast = false
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_after_comma = true
+csharp_space_after_dot = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_before_comma = false
+csharp_space_before_dot = false
+csharp_space_before_open_square_brackets = false
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_square_brackets = false

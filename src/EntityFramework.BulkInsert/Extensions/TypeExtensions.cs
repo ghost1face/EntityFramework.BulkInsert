@@ -24,7 +24,8 @@ namespace EntityFramework.BulkInsert.Extensions
         /// <returns>PropertyValue</returns>
         public static object GetPrivateFieldValue(this object obj, string propName)
         {
-            if (obj == null) throw new ArgumentNullException(nameof(obj));
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
             Type t = obj.GetType();
             FieldInfo fieldInfo = null;
             PropertyInfo propertyInfo = null;
@@ -77,9 +78,9 @@ namespace EntityFramework.BulkInsert.Extensions
             MemberExpression member = Expression.PropertyOrField(param, fieldName);
             LambdaExpression lambda = Expression.Lambda(typeof(Func<T, TReturn>), member, param);
 
-            Func<T, TReturn> compiled = (Func<T, TReturn>)lambda.Compile();
+            var compiled = (Func<T, TReturn>)lambda.Compile();
 
-            fieldAccessorLookup.TryUpdate(fieldName, compiled, compiled);
+            fieldAccessorLookup.AddOrUpdate(fieldName, compiled, (key, value) => compiled);
 
             return compiled;
         }
@@ -106,10 +107,10 @@ namespace EntityFramework.BulkInsert.Extensions
             ParameterExpression param = Expression.Parameter(type, "arg");
             MemberExpression member = Expression.PropertyOrField(param, fieldName);
             LambdaExpression lambda = Expression.Lambda(lambdaType, member, param);
-            
-            Func<object, TReturn> compiled = (Func<object, TReturn>)lambda.Compile();
 
-            fieldAccessorLookup.TryUpdate(fieldName, compiled, compiled);
+            var compiled = (Func<object, TReturn>)lambda.Compile();
+
+            fieldAccessorLookup.AddOrUpdate(fieldName, compiled, (key, value) => compiled);
 
             return compiled;
         }

@@ -51,21 +51,12 @@
           <SpecificVersion>False</SpecificVersion>
           <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
         </Reference>
-        <Reference Include="EntityFramework.MappingAPI">
-          <SpecificVersion>False</SpecificVersion>
-          <HintPath>..\packages\EntityFramework.MappingAPI.6.1.0.9\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
       </ItemGroup>
     </When>
   </Choose>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="EntityFramework.MappingAPI, Version=6.1.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.MappingAPI.6.1.0.9\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -108,6 +99,12 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EntityFramework.MappingAPI\EntityFramework.MappingAPI.csproj">
+      <Project>{9aeb6eb0-f898-43cf-b894-bd8e52428e7c}</Project>
+      <Name>EntityFramework.MappingAPI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

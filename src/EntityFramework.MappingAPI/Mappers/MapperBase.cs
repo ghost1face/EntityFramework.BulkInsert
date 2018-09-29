@@ -6,6 +6,7 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Reflection;
 using System.Collections;
+using System.Data.Entity.Core.Mapping;
 
 namespace EntityFramework.MappingAPI.Mappers
 {
@@ -44,9 +45,12 @@ namespace EntityFramework.MappingAPI.Mappers
 
         protected virtual Dictionary<string, TphData> GetTphData()
         {
-            var entitySetMaps = (IEnumerable<object>)MetadataWorkspace
-                    .GetItemCollection(DataSpace.CSSpace)[0]
-                    .GetPrivateFieldValue("EntitySetMaps");
+            var entityContainerMapping = MetadataWorkspace
+                .GetItemCollection(DataSpace.CSSpace)[0] as EntityContainerMapping;
+
+            var entitySetMaps = entityContainerMapping.EntitySetMappings;
+            //.GetFieldValue<EntityContainerMapping, IReadOnlyCollection<EntitySetBaseMapping>>("EntitySetMaps");
+            //.GetPrivateFieldValue("EntitySetMaps");
 
             var data = new Dictionary<string, TphData>();
 
@@ -56,17 +60,25 @@ namespace EntityFramework.MappingAPI.Mappers
                 var navProps = new List<NavigationProperty>();
                 var discriminators = new Dictionary<string, object>();
 
-                var typeMappings = (IEnumerable<object>)entitySetMap.GetPrivateFieldValue("TypeMappings");
+                var typeMappings = entitySetMap.EntityTypeMappings.AsEnumerable();
+                //var typeMappings = (IEnumerable<object>)entitySetMap.GetPrivateFieldValue("TypeMappings");
 
                 // make sure that the baseType appear last in the list
                 typeMappings = typeMappings
-                    .OrderBy(tm => ((IEnumerable<object>)tm.GetPrivateFieldValue("IsOfTypes")).Count());
+                    .OrderBy(tm => tm.IsOfEntityTypes.Count());
+                //typeMappings = typeMappings
+                //    .OrderBy(tm => ((IEnumerable<object>)tm.GetPrivateFieldValue("IsOfTypes")).Count());
 
                 foreach (var typeMapping in typeMappings)
                 {
-                    var types = (IEnumerable<EdmType>)typeMapping.GetPrivateFieldValue("Types");
-                    var isOfypes = (IEnumerable<EdmType>)typeMapping.GetPrivateFieldValue("IsOfTypes");
-                    var mappingFragments = (IEnumerable<object>)typeMapping.GetPrivateFieldValue("MappingFragments");
+                    var types = typeMapping.EntityTypes.Cast<EdmType>();
+                    var isOfypes = typeMapping.IsOfEntityTypes.Cast<EdmType>();
+                    var mappingFragments = typeMapping.Fragments.AsEnumerable();
+
+
+                    //var types = (IEnumerable<EdmType>)typeMapping.GetPrivateFieldValue("Types");
+                    //var isOfypes = (IEnumerable<EdmType>)typeMapping.GetPrivateFieldValue("IsOfTypes");
+                    //var mappingFragments = (IEnumerable<object>)typeMapping.GetPrivateFieldValue("MappingFragments");
 
                     // if isOfType.length > 0, then it is base type of TPH
                     // must merge properties with siblings
@@ -120,11 +132,15 @@ namespace EntityFramework.MappingAPI.Mappers
 
                         foreach (var fragment in mappingFragments)
                         {
-                            var conditionProperties = (IEnumerable)fragment.GetPrivateFieldValue("m_conditionProperties");
+                            //var conditionProperties = (IEnumerable)fragment.GetPrivateFieldValue("m_conditionProperties");
+                            var conditionProperties = fragment.Conditions.Cast<ValueConditionMapping>();
                             foreach (var conditionalProperty in conditionProperties)
                             {
-                                var columnName = ((EdmProperty)conditionalProperty.GetPrivateFieldValue("Key")).Name;
-                                var value = conditionalProperty.GetPrivateFieldValue("Value").GetPrivateFieldValue("Value");
+                                var columnName = conditionalProperty.Column.Name;
+                                var value = conditionalProperty.Value;
+
+                                //var columnName = ((EdmProperty)conditionalProperty.GetPrivateFieldValue("Key")).Name;
+                                //var value = conditionalProperty.GetPrivateFieldValue("Value").GetPrivateFieldValue("Value");
 
                                 data[identity].Discriminators[columnName] = value;
                                 discriminators[columnName] = value;
@@ -136,6 +152,101 @@ namespace EntityFramework.MappingAPI.Mappers
 
             return data;
         }
+
+        //protected virtual Dictionary<string, TphData> GetTphData_2()
+        //{
+        //    var entitySetMaps = (IEnumerable<object>)MetadataWorkspace
+        //            .GetItemCollection(DataSpace.CSSpace)[0]
+        //            .GetPrivateFieldValue("EntitySetMaps");
+
+        //    var data = new Dictionary<string, TphData>();
+
+        //    foreach (var entitySetMap in entitySetMaps)
+        //    {
+        //        var props = new List<EdmMember>();
+        //        var navProps = new List<NavigationProperty>();
+        //        var discriminators = new Dictionary<string, object>();
+
+        //        var typeMappings = (IEnumerable<object>)entitySetMap.GetPrivateFieldValue("TypeMappings");
+
+        //        // make sure that the baseType appear last in the list
+        //        typeMappings = typeMappings
+        //            .OrderBy(tm => ((IEnumerable<object>)tm.GetPrivateFieldValue("IsOfTypes")).Count());
+
+        //        foreach (var typeMapping in typeMappings)
+        //        {
+        //            var types = (IEnumerable<EdmType>)typeMapping.GetPrivateFieldValue("Types");
+        //            var isOfypes = (IEnumerable<EdmType>)typeMapping.GetPrivateFieldValue("IsOfTypes");
+        //            var mappingFragments = (IEnumerable<object>)typeMapping.GetPrivateFieldValue("MappingFragments");
+
+        //            // if isOfType.length > 0, then it is base type of TPH
+        //            // must merge properties with siblings
+        //            foreach (EntityType type in isOfypes)
+        //            {
+        //                var identity = type.ToString();
+        //                if (!data.ContainsKey(identity))
+        //                    data[identity] = new TphData();
+
+        //                data[identity].NavProperties = navProps.ToArray();
+        //                data[identity].Properties = props.ToArray();
+        //                data[identity].Discriminators = discriminators;
+        //            }
+
+        //            foreach (EntityType type in types)
+        //            {
+        //                var identity = type.ToString();
+        //                if (!data.ContainsKey(identity))
+        //                    data[identity] = new TphData();
+
+        //                // type.Properties gets properties including inherited properties
+        //                var tmp = new List<EdmMember>(type.Properties);
+
+        //                foreach (var navProp in type.NavigationProperties)
+        //                {
+        //                    var associationType = navProp.RelationshipType as AssociationType;
+        //                    if (associationType != null)
+        //                    {
+        //                        // if entity does not contain id property i.e has only reference object for a fk
+        //                        if (associationType.ReferentialConstraints.Count == 0)
+        //                        {
+        //                            tmp.Add(navProp);
+        //                        }
+        //                    }
+        //                }
+
+        //                data[identity].NavProperties = type.NavigationProperties.ToArray();
+        //                data[identity].Properties = tmp.ToArray();
+
+        //                foreach (var prop in type.Properties)
+        //                {
+        //                    if (!props.Contains(prop))
+        //                        props.Add(prop);
+        //                }
+
+        //                foreach (var navProp in type.NavigationProperties)
+        //                {
+        //                    if (!navProps.Contains(navProp))
+        //                        navProps.Add(navProp);
+        //                }
+
+        //                foreach (var fragment in mappingFragments)
+        //                {
+        //                    var conditionProperties = (IEnumerable)fragment.GetPrivateFieldValue("m_conditionProperties");
+        //                    foreach (var conditionalProperty in conditionProperties)
+        //                    {
+        //                        var columnName = ((EdmProperty)conditionalProperty.GetPrivateFieldValue("Key")).Name;
+        //                        var value = conditionalProperty.GetPrivateFieldValue("Value").GetPrivateFieldValue("Value");
+
+        //                        data[identity].Discriminators[columnName] = value;
+        //                        discriminators[columnName] = value;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return data;
+        //}
 
         public Dictionary<string, TphData> TphData
         {

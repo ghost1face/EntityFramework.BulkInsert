@@ -52,23 +52,21 @@ namespace EntityFramework.MappingAPI
         /// <returns></returns>
         public static DbMapping Get(DbContext context)
         {
-            var cackeKey = context.GetType().FullName;
+            var cacheKey = context.GetType().FullName;
 
             var iDbModelCacheKeyProvider = context as IDbModelCacheKeyProvider;
             if (iDbModelCacheKeyProvider != null)
             {
-                cackeKey = iDbModelCacheKeyProvider.CacheKey;
+                cacheKey = iDbModelCacheKeyProvider.CacheKey;
             }
 
-            if (Mappings.ContainsKey(cackeKey))
-            {
-                return Mappings[cackeKey];
-            }
+            DbMapping mapping;
+            if (Mappings.TryGetValue(cacheKey, out mapping))
+                return mapping;
 
-            var mapping = new DbMapping(context);
-            //var mapping = Map(context);
+            mapping = new DbMapping(context);
 
-            Mappings[cackeKey] = mapping;
+            Mappings[cacheKey] = mapping;
             return mapping;
         }
     }
