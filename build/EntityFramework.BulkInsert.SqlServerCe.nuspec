@@ -19,11 +19,10 @@
     <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
-    <copyright>Copyright  2018</copyright>
+    <copyright>Copyright  2019</copyright>
     <tags>data ef ef6 code-first batch bulk insert</tags>
     <dependencies>
       <dependency id="EntityFramework" version="6.1.0" />
-      <dependency id="EntityFramework.MappingAPI" version="(,6.1.0.9]" />
       <dependency id="EntityFramework.BulkInsert" version="6.0.3.5" />
     </dependencies>
   </metadata>

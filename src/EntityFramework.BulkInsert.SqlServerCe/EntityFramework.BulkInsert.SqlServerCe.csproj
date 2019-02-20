@@ -79,7 +79,7 @@
       <Name>EntityFramework.BulkInsert</Name>
     </ProjectReference>
     <ProjectReference Include="..\EntityFramework.MappingAPI\EntityFramework.MappingAPI.csproj">
-      <Project>{9aeb6eb0-f898-43cf-b894-bd8e52428e7c}</Project>
+      <Project>{9AEB6EB0-F898-43CF-B894-BD8E52428E7C}</Project>
       <Name>EntityFramework.MappingAPI</Name>
     </ProjectReference>
   </ItemGroup>
