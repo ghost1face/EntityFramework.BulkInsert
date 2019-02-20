@@ -122,7 +122,9 @@
   <PropertyGroup>
     <PostBuildEvent>ren $(TargetPath) ToMerge.dll
 
-$(SolutionDir)..\tools\ILMerge\ILMerge.exe /out:$(TargetName).dll $(TargetDir)ToMerge.dll $(TargetDir)EntityFramework.MappingAPI.dll</PostBuildEvent>
+$(ProjectDir)..\..\tools\ILMerge\ILMerge.exe /out:$(TargetFileName) $(TargetDir)ToMerge.dll $(TargetDir)EntityFramework.MappingAPI.dll
+
+del $(TargetDir)ToMerge.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
