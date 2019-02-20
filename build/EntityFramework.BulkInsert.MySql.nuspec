@@ -18,13 +18,12 @@
     <projectUrl>https://github.com/ghost1face/EntityFramework.BulkInsert</projectUrl>
     <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
-    <copyright>Copyright  2018</copyright>
+    <license type="expression">Apache-2.0</license>
+    <copyright>Copyright 2019</copyright>
     <tags>data ef ef6 code-first batch bulk insert mysql</tags>
     <dependencies>
-      <dependency id="EntityFramework" version="6.1.0" />
-      <dependency id="EntityFramework.MappingAPI" version="(,6.1.0.9]" />
-      <dependency id="EntityFramework.BulkInsert" version="6.0.3.5" />
+      <dependency id="EntityFramework" version="6.1.0" />    
+      <dependency id="EntityFramework.BulkInsert" version="6.0.3.9" />
       <dependency id="MySql.Data" version="6.9.11" />
       <dependency id="MySql.Data.Entity" version="6.9.11" />
     </dependencies>

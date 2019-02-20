@@ -52,10 +52,6 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="EntityFramework.MappingAPI, Version=6.1.0.9, Culture=neutral, PublicKeyToken=7ee2e825d201459e, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.MappingAPI.6.1.0.9\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -81,6 +77,10 @@
     <ProjectReference Include="..\EntityFramework.BulkInsert\EntityFramework.BulkInsert.csproj">
       <Project>{E48AB221-FB79-4F22-9641-3C283F44F1C7}</Project>
       <Name>EntityFramework.BulkInsert</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntityFramework.MappingAPI\EntityFramework.MappingAPI.csproj">
+      <Project>{9AEB6EB0-F898-43CF-B894-BD8E52428E7C}</Project>
+      <Name>EntityFramework.MappingAPI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
