@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright ©  2019")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -14,12 +14,12 @@
 // [assembly: AssemblyVersion("1.0.*")]
 
 #if EF4
-[assembly: AssemblyVersion("4.1.0.23")]
-[assembly: AssemblyFileVersion("4.1.0.23")]
+[assembly: AssemblyVersion("4.1.0.24")]
+[assembly: AssemblyFileVersion("4.1.0.24")]
 #endif
 #if EF5
-[assembly: AssemblyVersion("5.0.0.23")]
-[assembly: AssemblyFileVersion("5.0.0.23")]
+[assembly: AssemblyVersion("5.0.0.24")]
+[assembly: AssemblyFileVersion("5.0.0.24")]
 #endif
 #if EF6
 [assembly: AssemblyVersion("6.0.3.9")]
