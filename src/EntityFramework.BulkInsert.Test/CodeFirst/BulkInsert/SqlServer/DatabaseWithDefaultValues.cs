@@ -18,8 +18,11 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert.SqlServer
         {
             public void InitializeDatabase(DatabaseWithDefaultValues context)
             {
-                context.Database.ExecuteSqlCommand(
-                    "ALTER TABLE [dbo].[Audits] ADD CONSTRAINT [DF_Audit_AuditUserName] DEFAULT (suser_sname()) FOR [AuditUserName];");
+                string sql = @"IF NOT EXISTS(SELECT * FROM sys.default_constraints WHERE name = 'DF_Audit_AuditUserName')
+                BEGIN
+                ALTER TABLE [dbo].[Audits] ADD CONSTRAINT [DF_Audit_AuditUserName] DEFAULT (suser_sname()) FOR [AuditUserName]
+                END";
+                context.Database.ExecuteSqlCommand(sql);
             }
         }
     }

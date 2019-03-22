@@ -14,7 +14,7 @@ namespace EntityFramework.BulkInsert.Test.CodeFirst.BulkInsert.SqlServer
             {
                 ctx.Database.CreateIfNotExists();
 
-                ctx.Database.Initialize(false);
+                ctx.Database.Initialize(true);
 
                 List<Audit> audits = new List<Audit> { new Audit() };
 
