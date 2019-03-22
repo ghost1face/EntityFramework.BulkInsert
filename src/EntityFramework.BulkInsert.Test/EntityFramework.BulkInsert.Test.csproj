@@ -103,6 +103,8 @@
     <Compile Include="CodeFirst\BulkInsert\MySql\MySqlBulkInsertTest.cs" />
     <Compile Include="CodeFirst\BulkInsert\PerformanceTestBase.cs" />
     <Compile Include="CodeFirst\BulkInsert\SqlCe\SqlCeBulkInsertTest.cs" />
+    <Compile Include="CodeFirst\BulkInsert\SqlServer\DatabaseWithDefaultValues.cs" />
+    <Compile Include="CodeFirst\BulkInsert\SqlServer\DatabaseWithDefaultValuesTest.cs" />
     <Compile Include="CodeFirst\BulkInsert\SqlServer\SqlBulkInsertTest.cs" />
     <Compile Include="CodeFirst\BulkInsert\SqlServer\SqlBulkInsertPerformanceTest.cs" />
     <Compile Include="CodeFirst\MySqlContext.cs" />
