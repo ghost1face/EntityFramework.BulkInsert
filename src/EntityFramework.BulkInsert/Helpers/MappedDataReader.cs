@@ -72,7 +72,7 @@ namespace EntityFramework.BulkInsert.Helpers
                 }
                 catch
                 {
-                    // todo - catch only EntityTypeNoFoundException when mapping api is upgraded
+                    // todo - catch only EntityTypeNotFoundException when mapping api is upgraded
                     // Maybe these derived types are not used. Throw when invalid type is used while reading.
                 }
             }
