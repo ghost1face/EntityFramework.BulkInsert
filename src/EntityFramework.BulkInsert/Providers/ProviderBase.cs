@@ -96,12 +96,20 @@ namespace EntityFramework.BulkInsert.Providers
                             await RunAsync(entities, transaction);
                             transaction.Commit();
                         }
-                        catch (Exception)
+                        catch (Exception dbException)
                         {
                             if (transaction.Connection != null)
                             {
-                                transaction.Rollback();
+                                try
+                                {
+                                    transaction.Rollback();
+                                }
+                                catch (Exception rollbackException)
+                                {
+                                    throw new AggregateException(dbException, rollbackException);
+                                }
                             }
+
                             throw;
                         }
                     }
@@ -192,16 +200,23 @@ namespace EntityFramework.BulkInsert.Providers
                             Run(entities, transaction);
                             transaction.Commit();
                         }
-                        catch (Exception)
+                        catch (Exception dbException)
                         {
                             if (transaction.Connection != null)
                             {
-                                transaction.Rollback();
+                                try
+                                {
+                                    transaction.Rollback();
+                                }
+                                catch (Exception rollbackException)
+                                {
+                                    throw new AggregateException(dbException, rollbackException);
+                                }
                             }
+
                             throw;
                         }
                     }
-
                 }
                 finally
                 {
