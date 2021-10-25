@@ -170,6 +170,14 @@
     <Compile Include="Issue1369\Issue1369Context.cs" />
     <Compile Include="Issue1369\LoanEntity.cs" />
     <Compile Include="Issue1369\CreditReportEntity.cs" />
+    <Compile Include="IssueWithInheritance\01 StandardInheritance\Child.cs" />
+    <Compile Include="IssueWithInheritance\01 StandardInheritance\Parent.cs" />
+    <Compile Include="IssueWithInheritance\02 TablePerType\AbstractParent.cs" />
+    <Compile Include="IssueWithInheritance\02 TablePerType\ApChild.cs" />
+    <Compile Include="IssueWithInheritance\03 Renamed Tables\RenamedChild.cs" />
+    <Compile Include="IssueWithInheritance\03 Renamed Tables\RenamedParent.cs" />
+    <Compile Include="IssueWithInheritance\InheritanceIssueContext.cs" />
+    <Compile Include="IssueWithInheritance\InheritanceTests.cs" />
     <Compile Include="MappedDataReaderTest.cs" />
     <Compile Include="CodeFirst\Domain\ComplexTypes\Address.cs" />
     <Compile Include="CodeFirst\Domain\ComplexTypes\Contact.cs" />
