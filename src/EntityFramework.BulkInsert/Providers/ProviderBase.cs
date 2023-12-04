@@ -65,9 +65,9 @@ namespace EntityFramework.BulkInsert.Providers
         /// <typeparam name="T"></typeparam>
         /// <param name="entities"></param>
         /// <param name="transaction"></param>
-        public Task RunAsync<T>(IEnumerable<T> entities, IDbTransaction transaction)
+        public async Task RunAsync<T>(IEnumerable<T> entities, IDbTransaction transaction)
         {
-            return RunAsync(entities, (TTransaction)transaction);
+            return await RunAsync(entities, (TTransaction)transaction);
         }
 
         /// <summary>
